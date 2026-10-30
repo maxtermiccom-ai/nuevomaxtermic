@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Cloud, Pencil, PlusCircle, ShieldCheck, Trash2, Upload } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { mockProjects, type ProjectRecord } from "@/lib/projects";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, projectSelectColumns, supabase } from "@/lib/supabase";
 
 const initialForm = {
   title: "",
@@ -40,7 +40,7 @@ export function AdminDashboard() {
       return;
     }
 
-    const { data, error } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
+    const { data, error } = await supabase.from("projects").select(projectSelectColumns).order("created_at", { ascending: false });
 
     if (error) {
       console.error("Supabase fetch error:", error.message);

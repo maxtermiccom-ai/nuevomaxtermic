@@ -29,6 +29,8 @@ export async function signInWithSupabase(email: string, password: string) {
   };
 }
 
+export const projectSelectColumns = "id, title, slug, category, description, client_name, images, created_at";
+
 export async function getProjectsFromSupabase() {
   if (!supabase) {
     return null;
@@ -36,7 +38,7 @@ export async function getProjectsFromSupabase() {
 
   const { data, error } = await supabase
     .from("projects")
-    .select("*")
+    .select(projectSelectColumns)
     .order("created_at", { ascending: false });
 
   if (error) {
