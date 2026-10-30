@@ -3,20 +3,34 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminDashboard } from "@/components/admin-dashboard";
+import { getSupabaseSession, isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 export function AdminGuard() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const token = window.localStorage.getItem("maxtermic-admin-auth");
+    const validateAccess = async () => {
+      if (!isSupabaseConfigured || !supabase) {
+        const token = window.localStorage.getItem("maxtermic-admin-auth");
+        if (token !== "true") {
+          router.replace("/admin/login");
+          return;
+        }
+        setReady(true);
+        return;
+      }
 
-    if (token !== "true") {
-      router.replace("/admin/login");
-      return;
-    }
+      const session = await getSupabaseSession();
+      if (!session) {
+        router.replace("/admin/login");
+        return;
+      }
 
-    setReady(true);
+      setReady(true);
+    };
+
+    validateAccess();
   }, [router]);
 
   if (!ready) {

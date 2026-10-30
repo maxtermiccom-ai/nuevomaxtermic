@@ -8,12 +8,26 @@ export const isSupabaseConfigured = Boolean(url && anonKey);
 export const supabase = isSupabaseConfigured
   ? createClient(url, anonKey, {
       auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-        detectSessionInUrl: false,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
     })
   : null;
+
+export async function signInWithSupabase(email: string, password: string) {
+  if (!supabase) {
+    return { success: false, error: "Supabase no está configurado." };
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  return {
+    success: !error,
+    data,
+    error,
+  };
+}
 
 export async function getProjectsFromSupabase() {
   if (!supabase) {
@@ -31,4 +45,18 @@ export async function getProjectsFromSupabase() {
   }
 
   return data ?? [];
+}
+
+export async function getSupabaseSession() {
+  if (!supabase) {
+    return null;
+  }
+
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    console.error("Error obtaining session:", error.message);
+    return null;
+  }
+
+  return data.session;
 }

@@ -1,16 +1,18 @@
 "use client";
 
 import { ArrowRight, LockKeyhole, Mail } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { isSupabaseConfigured, signInWithSupabase } from "@/lib/supabase";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("admin@maxtermic.cl");
   const [password, setPassword] = useState("maxtermic123");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -18,7 +20,26 @@ export default function AdminLoginPage() {
       return;
     }
 
+    if (!isSupabaseConfigured) {
+      localStorage.setItem("maxtermic-admin-auth", "true");
+      router.push("/admin");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    const result = await signInWithSupabase(email.trim(), password);
+
+    if (!result.success) {
+      const errorText = typeof result.error === "string" ? result.error : result.error?.message ?? "No se pudo iniciar sesión con Supabase.";
+      setError(errorText);
+      setLoading(false);
+      return;
+    }
+
     localStorage.setItem("maxtermic-admin-auth", "true");
+    setLoading(false);
     router.push("/admin");
   };
 
@@ -52,14 +73,16 @@ export default function AdminLoginPage() {
 
           {error && <div className="text-sm text-rose-300">{error}</div>}
 
-          <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950">
-            Iniciar sesión
+          <button type="submit" disabled={loading} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">
+            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             <ArrowRight size={16} />
           </button>
         </form>
 
         <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-xs leading-6 text-slate-400">
-          Demo de acceso: admin@maxtermic.cl / maxtermic123. En producción, reemplazar por Supabase Auth con email/contraseña.
+          {isSupabaseConfigured
+            ? "Usando autenticación real de Supabase Auth."
+            : "Modo demo: admin@maxtermic.cl / maxtermic123. En producción, usa Supabase Auth."}
         </div>
       </div>
     </main>
