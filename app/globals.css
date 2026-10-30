@@ -7,6 +7,9 @@
   --primary-800: #1b365d;
   --primary-500: #60a5fa;
   --cyan: #00d2ff;
+  --surface: rgba(15, 23, 42, 0.78);
+  --surface-strong: rgba(15, 23, 42, 0.92);
+  --line: rgba(148, 163, 184, 0.18);
 }
 
 @theme inline {
@@ -25,7 +28,7 @@ body {
   background:
     radial-gradient(circle at top, rgba(0, 210, 255, 0.12), transparent 26%),
     radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.12), transparent 28%),
-    var(--background);
+    linear-gradient(180deg, #020817 0%, #020b1d 100%);
   color: var(--foreground);
   font-family: var(--font-inter), "Segoe UI", sans-serif;
 }
@@ -35,15 +38,19 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
   background-size: 36px 36px;
-  mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+  mask-image: radial-gradient(circle at center, black 48%, transparent 100%);
   pointer-events: none;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html, body {
+  min-height: 100%;
 }
 
 ::selection {
@@ -56,7 +63,12 @@ img {
   max-width: 100%;
 }
 
+img, a, button, input, textarea {
+  transition: all 0.2s ease;
+}
+
 .glass-panel {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 30px 80px rgba(14, 116, 144, 0.18);
 }

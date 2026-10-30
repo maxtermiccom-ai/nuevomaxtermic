@@ -8,9 +8,11 @@ import {
   Factory,
   Gauge,
   MapPin,
+  Menu,
   MessageSquareText,
   Phone,
   ShieldCheck,
+  X,
   Snowflake,
   Star,
   Thermometer,
@@ -18,7 +20,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ProjectRecord } from "@/lib/projects";
 import { projectCategories } from "@/lib/projects";
 
@@ -42,6 +44,29 @@ const services = [
     icon: Wrench,
     title: "Mantenimiento Preventivo & Correctivo",
     text: "Programas de servicio 24/7 para optimizar consumo, prevenir fallas y prolongar la vida útil del sistema térmico.",
+  },
+];
+
+const advantages = [
+  {
+    icon: ShieldCheck,
+    title: "Cumplimiento técnico",
+    text: "Normas, revisión de diseño y supervisión de obra orientada a la seguridad y la operabilidad del sistema.",
+  },
+  {
+    icon: Gauge,
+    title: "Eficiencia real",
+    text: "Optimización del consumo energético con soluciones pensadas para aumentar rendimiento y reducir costos.",
+  },
+  {
+    icon: Building2,
+    title: "Escala industrial",
+    text: "Experiencia en infraestructura crítica, plantas, campus y edificios con alta exigencia técnica.",
+  },
+  {
+    icon: MessageSquareText,
+    title: "Soporte continuo",
+    text: "Respuesta ágil, acompañamiento operativo y mantenimiento para mantener la continuidad de la instalación.",
   },
 ];
 
@@ -78,6 +103,8 @@ const reveal = {
 
 export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -87,6 +114,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 16);
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === "Todos") return projects;
@@ -117,61 +153,109 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   };
 
   return (
-    <div className="relative overflow-hidden bg-slate-950 text-slate-100">
+    <div className="relative overflow-x-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,210,255,0.12),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(96,165,250,0.18),_transparent_25%)]" />
 
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-6 lg:px-8">
-        <a href="#inicio" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/40 bg-slate-900/80 shadow-[0_0_22px_rgba(0,210,255,0.35)]">
-            <div className="relative h-6 w-6">
-              <div className="absolute left-0 top-1 h-4 w-1 rounded-full bg-cyan-300" />
-              <div className="absolute right-0 top-0 h-6 w-1 rounded-full bg-sky-500" />
-              <div className="absolute left-2 top-0 h-1.5 w-3 rounded-full bg-cyan-400" />
+      <header
+        style={{ position: "sticky", top: 0, zIndex: 50 }}
+        className={`border-b transition-all duration-300 ${isScrolled ? "border-cyan-500/30 bg-slate-950/85 shadow-[0_12px_30px_rgba(2,6,23,0.55)] backdrop-blur-xl" : "border-slate-800/80 bg-slate-950/70 backdrop-blur-md"}`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6 lg:px-8">
+          <a href="#inicio" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/40 bg-slate-900/80 shadow-[0_0_22px_rgba(0,210,255,0.35)]">
+              <div className="relative h-6 w-6">
+                <div className="absolute left-0 top-1 h-4 w-1 rounded-full bg-cyan-300" />
+                <div className="absolute right-0 top-0 h-6 w-1 rounded-full bg-sky-500" />
+                <div className="absolute left-2 top-0 h-1.5 w-3 rounded-full bg-cyan-400" />
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/80">MAXTERMIC</div>
-            <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-300">Servicios de Climatización</div>
-          </div>
-        </a>
+            <div>
+              <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/80">MAXTERMIC</div>
+              <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-300">Servicios de Climatización</div>
+            </div>
+          </a>
 
-        <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-          {[
-            ["Inicio", "#inicio"],
-            ["Servicios", "#servicios"],
-            ["Proyectos", "#proyectos"],
-            ["Nosotros", "#nosotros"],
-            ["Contacto", "#contacto"],
-          ].map(([label, href]) => (
-            <a key={label} href={href} className="transition hover:text-white">
-              {label}
+          <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
+            {[
+              ["Inicio", "#inicio"],
+              ["Servicios", "#servicios"],
+              ["Proyectos", "#proyectos"],
+              ["Nosotros", "#nosotros"],
+              ["Contacto", "#contacto"],
+            ].map(([label, href]) => (
+              <a key={label} href={href} className="transition hover:text-white">
+                {label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-3 md:flex">
+            <a href="tel:+56900000000" className="hidden rounded-full border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white sm:inline-flex">
+              Llamar ahora
             </a>
-          ))}
-        </nav>
+            <a href="/admin/login" className="hidden rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-500/15 sm:inline-flex">
+              Panel
+            </a>
+            <a href="#contacto" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.45)] transition hover:brightness-110">
+              Solicitar cotización
+              <ArrowRight size={16} />
+            </a>
+          </div>
 
-        <div className="flex items-center gap-3">
-          <a href="tel:+56900000000" className="hidden rounded-full border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white sm:inline-flex">
-            Llamar ahora
-          </a>
-          <a href="/admin/login" className="hidden rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-500/15 sm:inline-flex">
-            Panel
-          </a>
-          <a href="#contacto" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.45)] transition hover:brightness-110">
-            Solicitar cotización
-            <ArrowRight size={16} />
-          </a>
+          <button
+            type="button"
+            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 transition hover:border-cyan-400/60 hover:text-cyan-200 md:hidden"
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        <div className={`${isMobileMenuOpen ? "block" : "hidden"} border-t border-slate-800 bg-slate-950/95 md:hidden`}>
+          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4 sm:px-6">
+            {[
+              ["Inicio", "#inicio"],
+              ["Servicios", "#servicios"],
+              ["Proyectos", "#proyectos"],
+              ["Nosotros", "#nosotros"],
+              ["Contacto", "#contacto"],
+            ].map(([label, href]) => (
+              <a
+                key={label}
+                href={href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="rounded-xl px-3 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-900 hover:text-white"
+              >
+                {label}
+              </a>
+            ))}
+            <div className="mt-2 grid gap-2 pt-2">
+              <a href="tel:+56900000000" className="rounded-xl border border-slate-700 px-4 py-3 text-center text-sm font-medium text-slate-100 transition hover:border-cyan-400/60">
+                Llamar ahora
+              </a>
+              <a href="/admin/login" className="rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-3 text-center text-sm font-medium text-cyan-200 transition hover:bg-cyan-500/15">
+                Panel
+              </a>
+              <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3 text-sm font-semibold text-slate-950">
+                Solicitar cotización
+                <ArrowRight size={16} />
+              </a>
+            </div>
+          </nav>
         </div>
       </header>
 
-      <main id="inicio">
-        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:pb-20 lg:pt-12">
+      <main id="inicio" className="scroll-mt-24">
+        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:pb-20 lg:pt-12">
           <motion.div {...reveal}>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-cyan-200">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-cyan-200">
               <Gauge size={14} />
               Infraestructura térmica de alto rendimiento
             </div>
 
-            <h1 className="max-w-xl text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-7xl">
+            <h1 className="max-w-xl text-4xl font-black tracking-[-0.04em] text-white sm:text-5xl lg:text-7xl">
               Ingeniería en <span className="bg-gradient-to-r from-cyan-300 via-sky-400 to-blue-500 bg-clip-text text-transparent">climatización</span> para grandes infraestructuras.
             </h1>
 
@@ -180,20 +264,20 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <a href="#proyectos" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-slate-200">
+              <a href="#proyectos" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-100">
                 Ver proyectos realizados
                 <ArrowRight size={16} />
               </a>
-              <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-white transition hover:border-cyan-400/50 hover:text-cyan-200">
+              <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-cyan-400/60 hover:text-cyan-200">
                 Contactar a un especialista
               </a>
             </div>
 
             <div className="mt-10 grid max-w-lg grid-cols-2 gap-4 sm:grid-cols-4">
               {highlights.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] backdrop-blur-sm">
+                <div key={item.label} className="rounded-2xl border border-slate-800/80 bg-slate-900/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-sm">
                   <div className="text-xl font-black text-cyan-300">{item.value}</div>
-                  <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{item.label}</div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-400">{item.label}</div>
                 </div>
               ))}
             </div>
@@ -202,7 +286,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <motion.div {...reveal} className="relative">
             <div className="absolute -left-10 top-10 h-32 w-32 rounded-full bg-cyan-400/20 blur-3xl" />
             <div className="absolute -right-10 bottom-10 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl" />
-            <div className="glass-panel relative overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 p-5 shadow-2xl shadow-cyan-950/20">
+            <div className="glass-panel relative overflow-hidden rounded-[30px] border border-white/10 bg-slate-900/75 p-5 shadow-[0_30px_80px_rgba(8,145,178,0.18)] backdrop-blur-xl">
               <div className="mb-5 flex items-center justify-between rounded-2xl border border-slate-800 bg-slate-950/80 px-4 py-3">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.28em] text-slate-400">Sistemas activos</div>
@@ -218,15 +302,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
                   { label: "Temperatura stable", value: "22.4°C", accent: "from-cyan-500 to-teal-400" },
                   { label: "Tiempo de respuesta", value: "< 9 min", accent: "from-blue-500 to-cyan-400" },
                 ].map((item) => (
-                  <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                  <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/65 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
                     <div className={`mb-4 h-2 rounded-full bg-gradient-to-r ${item.accent}`} />
-                    <div className="text-xs uppercase tracking-[0.24em] text-slate-400">{item.label}</div>
+                    <div className="text-[10px] uppercase tracking-[0.24em] text-slate-400">{item.label}</div>
                     <div className="mt-2 text-2xl font-black text-white">{item.value}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+              <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/75 p-4">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="text-sm font-medium text-slate-300">Operación y vigilancia</div>
                   <Thermometer className="text-cyan-300" size={18} />
@@ -253,7 +337,21 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </motion.div>
         </section>
 
-        <section id="servicios" className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+        <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {advantages.map(({ icon: Icon, title, text }) => (
+              <motion.div key={title} {...reveal} className="rounded-[26px] border border-slate-800/80 bg-slate-900/70 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.35)] transition duration-200 hover:-translate-y-1 hover:border-cyan-400/50">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300">
+                  <Icon size={20} />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
+                <p className="text-sm leading-6 text-slate-300">{text}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section id="servicios" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <motion.div {...reveal} className="mb-12 max-w-2xl">
             <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Servicios</div>
             <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">Soluciones de climatización para las operaciones más exigentes.</h2>
@@ -261,8 +359,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {services.map(({ icon: Icon, title, text }) => (
-              <motion.article key={title} {...reveal} className="group rounded-3xl border border-slate-800 bg-slate-900/70 p-6 transition hover:-translate-y-1 hover:border-cyan-400/50 hover:shadow-[0_18px_40px_rgba(34,211,238,0.18)]">
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300">
+              <motion.article key={title} {...reveal} className="group rounded-[28px] border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950/80 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.28)] transition duration-200 hover:-translate-y-1 hover:border-cyan-400/55 hover:shadow-[0_22px_60px_rgba(34,211,238,0.12)]">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
                   <Icon size={26} />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold text-white">{title}</h3>
@@ -272,7 +370,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </div>
         </section>
 
-        <section id="proyectos" className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+        <section id="proyectos" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <motion.div {...reveal} className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Proyectos</div>
@@ -326,7 +424,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </div>
         </section>
 
-        <section id="nosotros" className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+        <section id="nosotros" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-10 rounded-[32px] border border-slate-800 bg-slate-900/70 p-6 md:p-10 lg:grid-cols-[0.9fr_1.1fr]">
             <motion.div {...reveal}>
               <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Confianza</div>
@@ -387,7 +485,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </div>
         </section>
 
-        <section id="contacto" className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+        <section id="contacto" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             <motion.div {...reveal} className="rounded-[30px] border border-slate-800 bg-slate-900/70 p-7">
               <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Contacto</div>
