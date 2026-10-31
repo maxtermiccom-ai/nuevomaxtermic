@@ -33,6 +33,8 @@ export function AdminDashboard() {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [contactEmail, setContactEmail] = useState("admin@maxtermic.cl");
+  const [savingContactEmail, setSavingContactEmail] = useState(false);
 
   const loadProjects = async () => {
     if (!isSupabaseConfigured || !supabase) {
@@ -58,6 +60,21 @@ export function AdminDashboard() {
 
   useEffect(() => {
     loadProjects();
+
+    const loadContactEmail = async () => {
+      try {
+        const response = await fetch("/api/site-settings");
+        const payload = (await response.json()) as { contactEmail?: string };
+
+        if (payload.contactEmail) {
+          setContactEmail(payload.contactEmail);
+        }
+      } catch (error) {
+        console.error("Error loading contact email settings:", error);
+      }
+    };
+
+    loadContactEmail();
   }, []);
 
   const summary = useMemo(
@@ -69,6 +86,38 @@ export function AdminDashboard() {
     }),
     [projects],
   );
+
+  const handleSaveContactEmail = async () => {
+    setSavingContactEmail(true);
+    setStatusMessage("");
+
+    try {
+      const response = await fetch("/api/site-settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ contactEmail }),
+      });
+
+      const payload = (await response.json()) as { contactEmail?: string; message?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.message || "No se pudo guardar el correo destinatario.");
+      }
+
+      if (payload.contactEmail) {
+        setContactEmail(payload.contactEmail);
+      }
+
+      setStatusMessage("Correo destinatario actualizado correctamente.");
+    } catch (error) {
+      console.error(error);
+      setStatusMessage(error instanceof Error ? error.message : "No se pudo guardar el correo destinatario.");
+    } finally {
+      setSavingContactEmail(false);
+    }
+  };
 
   const handleInputChange = (field: keyof typeof initialForm, value: string | string[]) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -230,6 +279,36 @@ export function AdminDashboard() {
           </motion.div>
         ))}
       </div>
+
+      <section className="rounded-[28px] border border-slate-800 bg-slate-900/80 p-6">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <div className="text-xs uppercase tracking-[0.3em] text-cyan-300">Contacto</div>
+            <h2 className="mt-2 text-2xl font-black text-white">Correo destinatario</h2>
+          </div>
+          <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-cyan-200">
+            Email real
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <input
+            type="email"
+            value={contactEmail}
+            onChange={(event) => setContactEmail(event.target.value)}
+            className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400"
+            placeholder="recepcion@maxtermic.cl"
+          />
+          <button
+            type="button"
+            onClick={handleSaveContactEmail}
+            disabled={savingContactEmail}
+            className="rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {savingContactEmail ? "Guardando..." : "Guardar correo"}
+          </button>
+        </div>
+      </section>
 
       <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
         <section className="rounded-[28px] border border-slate-800 bg-slate-900/80 p-6">

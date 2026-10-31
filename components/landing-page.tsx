@@ -94,6 +94,24 @@ const testimonials = [
   },
 ];
 
+const news = [
+  {
+    title: "Buenas prácticas para mantener un sistema térmico sin interrupciones",
+    excerpt: "Estrategias clave para reducir fallas y mejorar la continuidad operativa en instalaciones críticas.",
+    date: "Ago 2026",
+  },
+  {
+    title: "Cómo optimizar la eficiencia energética en edificios de alta demanda",
+    excerpt: "Recomendaciones técnicas para equilibrar confort, consumo y sostenibilidad en proyectos institucionales.",
+    date: "Jul 2026",
+  },
+  {
+    title: "Nuevas prioridades en infraestructura térmica y ventilación",
+    excerpt: "Factores relevantes para seleccionar equipos, controlar costos y mejorar la operación a largo plazo.",
+    date: "Jun 2026",
+  },
+];
+
 const reveal = {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
@@ -114,6 +132,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof typeof form, string>>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 16);
@@ -146,22 +166,56 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!validateForm()) return;
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          company: form.company,
+          message: form.message,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "No se pudo enviar la solicitud.");
+      }
+
+      setSubmitted(true);
+      setForm({ name: "", email: "", phone: "", company: "", message: "" });
+      setErrors({});
+    } catch (error) {
+      setSubmitted(false);
+      setSubmitError(error instanceof Error ? error.message : "No se pudo enviar la solicitud.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const featuredProjects = projects.slice(0, 3);
 
   return (
     <div className="relative overflow-x-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,210,255,0.12),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(96,165,250,0.18),_transparent_25%)]" />
 
       <header
-        style={{ position: "sticky", top: 0, zIndex: 50 }}
-        className={`border-b transition-all duration-300 ${isScrolled ? "border-cyan-500/30 bg-slate-950/85 shadow-[0_12px_30px_rgba(2,6,23,0.55)] backdrop-blur-xl" : "border-slate-800/80 bg-slate-950/70 backdrop-blur-md"}`}
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${isScrolled ? "border-cyan-500/30 bg-slate-950/85 shadow-[0_12px_30px_rgba(2,6,23,0.55)] backdrop-blur-xl" : "border-slate-800/80 bg-slate-950/70 backdrop-blur-md"}`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6 lg:px-8">
-          <a href="#inicio" className="flex items-center gap-3">
+          <a href="/" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/40 bg-slate-900/80 shadow-[0_0_22px_rgba(0,210,255,0.35)]">
               <div className="relative h-6 w-6">
                 <div className="absolute left-0 top-1 h-4 w-1 rounded-full bg-cyan-300" />
@@ -177,11 +231,12 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
 
           <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
             {[
-              ["Inicio", "#inicio"],
-              ["Servicios", "#servicios"],
-              ["Proyectos", "#proyectos"],
-              ["Nosotros", "#nosotros"],
-              ["Contacto", "#contacto"],
+              ["Inicio", "/"],
+              ["Quiénes Somos", "/quienes-somos"],
+              ["Servicios", "/servicios"],
+              ["Casos de Éxito", "/casos-de-exito"],
+              ["Recursos", "/recursos"],
+              ["Contacto", "/contacto"],
             ].map(([label, href]) => (
               <a key={label} href={href} className="transition hover:text-white">
                 {label}
@@ -192,9 +247,6 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <div className="hidden items-center gap-3 md:flex">
             <a href="tel:+56900000000" className="hidden rounded-full border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white sm:inline-flex">
               Llamar ahora
-            </a>
-            <a href="/admin/login" className="hidden rounded-full border border-cyan-400/40 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-500/15 sm:inline-flex">
-              Panel
             </a>
             <a href="#contacto" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.45)] transition hover:brightness-110">
               Solicitar cotización
@@ -216,11 +268,12 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
         <div className={`${isMobileMenuOpen ? "block" : "hidden"} border-t border-slate-800 bg-slate-950/95 md:hidden`}>
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4 sm:px-6">
             {[
-              ["Inicio", "#inicio"],
-              ["Servicios", "#servicios"],
-              ["Proyectos", "#proyectos"],
-              ["Nosotros", "#nosotros"],
-              ["Contacto", "#contacto"],
+              ["Inicio", "/"],
+              ["Quiénes Somos", "/quienes-somos"],
+              ["Servicios", "/servicios"],
+              ["Casos de Éxito", "/casos-de-exito"],
+              ["Recursos", "/recursos"],
+              ["Contacto", "/contacto"],
             ].map(([label, href]) => (
               <a
                 key={label}
@@ -235,9 +288,6 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
               <a href="tel:+56900000000" className="rounded-xl border border-slate-700 px-4 py-3 text-center text-sm font-medium text-slate-100 transition hover:border-cyan-400/60">
                 Llamar ahora
               </a>
-              <a href="/admin/login" className="rounded-xl border border-cyan-400/40 bg-cyan-500/10 px-4 py-3 text-center text-sm font-medium text-cyan-200 transition hover:bg-cyan-500/15">
-                Panel
-              </a>
               <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3 text-sm font-semibold text-slate-950">
                 Solicitar cotización
                 <ArrowRight size={16} />
@@ -247,8 +297,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
         </div>
       </header>
 
-      <main id="inicio" className="scroll-mt-24">
-        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:pb-20 lg:pt-12">
+      <main>
+        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:pb-20">
           <motion.div {...reveal}>
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-cyan-200">
               <Gauge size={14} />
@@ -260,15 +310,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              Soluciones HVAC industriales, comerciales e institucionales diseñadas para maximizar eficiencia energética, confiabilidad operativa y confort térmico en edificios y plantas de gran escala.
+              Soluciones HVAC industriales, comerciales e institucionales diseñadas para maximizar eficiencia energética, confiabilidad operativa y continuidad del servicio.
             </p>
 
             <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <a href="#proyectos" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-100">
-                Ver proyectos realizados
+              <a href="/servicios" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(255,255,255,0.15)] transition duration-200 hover:-translate-y-0.5 hover:bg-slate-100">
+                Ver servicios
                 <ArrowRight size={16} />
               </a>
-              <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-cyan-400/60 hover:text-cyan-200">
+              <a href="/contacto" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 bg-slate-900/70 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:border-cyan-400/60 hover:text-cyan-200">
                 Contactar a un especialista
               </a>
             </div>
@@ -322,12 +372,12 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
                     ["Sistema de respaldo", "Activo"],
                   ].map(([label, value]) => (
                     <div key={label}>
-                      <div className="mb-1 flex justify-between text-xs text-slate-300">
+                      <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-[0.18em] text-slate-400">
                         <span>{label}</span>
                         <span>{value}</span>
                       </div>
-                      <div className="h-1.5 overflow-hidden rounded-full bg-slate-800">
-                        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: label === "Sistema de respaldo" ? "100%" : label === "Condensación" ? "96%" : "84%" }} />
+                      <div className="h-2 rounded-full bg-slate-800">
+                        <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" style={{ width: value === "Activo" ? "100%" : value }} />
                       </div>
                     </div>
                   ))}
@@ -337,246 +387,235 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </motion.div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-5 pb-8 sm:px-6 lg:px-8">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Propuesta de valor</p>
+            <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Soluciones con rigor técnico y acompañamiento real</h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {advantages.map(({ icon: Icon, title, text }) => (
-              <motion.div key={title} {...reveal} className="rounded-[26px] border border-slate-800/80 bg-slate-900/70 p-5 shadow-[0_18px_50px_rgba(15,23,42,0.35)] transition duration-200 hover:-translate-y-1 hover:border-cyan-400/50">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300">
-                  <Icon size={20} />
+              <div key={title} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/10 text-cyan-300">
+                  <Icon size={22} />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
-                <p className="text-sm leading-6 text-slate-300">{text}</p>
-              </motion.div>
+                <h3 className="text-xl font-semibold text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
+              </div>
             ))}
           </div>
         </section>
 
-        <section id="servicios" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
-          <motion.div {...reveal} className="mb-12 max-w-2xl">
-            <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Servicios</div>
-            <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">Soluciones de climatización para las operaciones más exigentes.</h2>
-          </motion.div>
+        <section id="servicios" className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Servicios</p>
+              <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Soluciones diseñadas para infraestructura crítica</h2>
+            </div>
+            <a href="/servicios" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+              Ver catálogo completo <ArrowRight size={15} />
+            </a>
+          </div>
 
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {services.map(({ icon: Icon, title, text }) => (
-              <motion.article key={title} {...reveal} className="group rounded-[28px] border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950/80 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.28)] transition duration-200 hover:-translate-y-1 hover:border-cyan-400/55 hover:shadow-[0_22px_60px_rgba(34,211,238,0.12)]">
-                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-500/40 bg-cyan-500/10 text-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.18)]">
-                  <Icon size={26} />
+              <div key={title} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 transition hover:-translate-y-1 hover:border-cyan-400/30">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/30 bg-cyan-500/10 text-cyan-300">
+                  <Icon size={22} />
                 </div>
-                <h3 className="mb-3 text-xl font-semibold text-white">{title}</h3>
-                <p className="text-sm leading-7 text-slate-300">{text}</p>
-              </motion.article>
+                <h3 className="text-xl font-semibold text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{text}</p>
+                <a href="/servicios" className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                  Ver más <ArrowRight size={15} />
+                </a>
+              </div>
             ))}
           </div>
         </section>
 
-        <section id="proyectos" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
-          <motion.div {...reveal} className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Resultados</p>
+            <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Métricas que respaldan nuestra experiencia</h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+            {highlights.map((item) => (
+              <div key={item.label} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 text-center">
+                <div className="text-3xl font-black text-cyan-300">{item.value}</div>
+                <div className="mt-3 text-[10px] uppercase tracking-[0.18em] text-slate-400">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
-              <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Proyectos</div>
-              <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">Casos de éxito en infraestructura crítica.</h2>
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Casos de éxito</p>
+              <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Proyectos con impacto real en operación y eficiencia</h2>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {projectCategories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => setActiveCategory(category)}
-                  className={`rounded-full border px-4 py-2 text-sm transition ${activeCategory === category ? "border-cyan-400/60 bg-cyan-500/10 text-cyan-200" : "border-slate-700 bg-slate-900/80 text-slate-300 hover:border-slate-500"}`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </motion.div>
+            <a href="/casos-de-exito" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+              Ver portafolio <ArrowRight size={15} />
+            </a>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            {featuredProjects.map((project) => (
+              <article key={project.id} className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70">
+                <div className="h-40 bg-gradient-to-br from-cyan-500/30 via-sky-500/20 to-slate-900 p-5">
+                  <div className="flex h-full items-end justify-between">
+                    <span className="rounded-full border border-cyan-400/30 bg-slate-950/60 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-200">
+                      {project.category}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.18em] text-slate-300">Proyecto</span>
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-300">{project.description}</p>
+                  <div className="mt-5 h-px w-full bg-slate-800" />
+                  <a href="/casos-de-exito" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                    Ver detalle <ArrowRight size={15} />
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Confianza</p>
+            <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Clientes y experiencias que validan nuestra forma de trabajar</h2>
+          </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            {filteredProjects.map((project) => (
-              <motion.article key={project.id} {...reveal} className="overflow-hidden rounded-[26px] border border-slate-800 bg-slate-900/70">
-                <div className="grid md:grid-cols-[1.15fr_0.85fr]">
-                  <div className="relative h-72 overflow-hidden">
-                    <img src={project.images[0]} alt={project.title} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/10 to-transparent" />
-                  </div>
-                  <div className="flex flex-col justify-between p-6">
-                    <div>
-                      <div className="mb-3 inline-flex items-center rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-cyan-200">
-                        {project.category}
-                      </div>
-                      <h3 className="text-2xl font-bold text-white">{project.title}</h3>
-                      <div className="mt-3 flex items-center gap-2 text-sm text-slate-400">
-                        <Building2 size={16} className="text-cyan-300" />
-                        {project.client_name ?? "Cliente corporativo"}
-                      </div>
-                      <p className="mt-4 text-sm leading-7 text-slate-300">{project.description}</p>
-                    </div>
-
-                    <div className="mt-5 flex items-center justify-between border-t border-slate-800 pt-4 text-sm text-slate-300">
-                      <span className="flex items-center gap-2"><MapPin size={15} className="text-cyan-300" />Latinoamérica</span>
-                      <button type="button" className="inline-flex items-center gap-2 font-medium text-cyan-300 transition hover:text-cyan-200">
-                        Ver alcance <ArrowRight size={16} />
-                      </button>
-                    </div>
-                  </div>
+            {testimonials.map((testimonial) => (
+              <div key={testimonial.name} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+                <div className="mb-4 flex items-center gap-1 text-cyan-300">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={`${testimonial.name}-${index}`} size={16} fill="currentColor" />
+                  ))}
                 </div>
-              </motion.article>
+                <p className="text-base leading-7 text-slate-200">“{testimonial.quote}”</p>
+                <div className="mt-6 border-t border-slate-800 pt-4">
+                  <div className="font-semibold text-white">{testimonial.name}</div>
+                  <div className="text-sm text-slate-400">{testimonial.role}</div>
+                </div>
+              </div>
             ))}
           </div>
         </section>
 
-        <section id="nosotros" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-10 rounded-[32px] border border-slate-800 bg-slate-900/70 p-6 md:p-10 lg:grid-cols-[0.9fr_1.1fr]">
-            <motion.div {...reveal}>
-              <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Confianza</div>
-              <h2 className="mt-4 text-3xl font-black text-white sm:text-4xl">Garantía técnica, seguridad y ejecución orientada a resultados.</h2>
-              <div className="mt-8 space-y-5 text-slate-300">
-                {[
-                  "Diseño técnico basado en normas y estándares internacionales.",
-                  "Comités de seguridad, revisión de proyectos y supervisión de campo.",
-                  "Soporte integral para mantenedores, operadores y equipos de infraestructura.",
-                ].map((text) => (
-                  <div key={text} className="flex items-start gap-3">
-                    <BadgeCheck className="mt-0.5 text-cyan-300" size={18} />
-                    <span>{text}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+        <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Recursos</p>
+              <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Últimas noticias y contenidos de interés</h2>
+            </div>
+            <a href="/recursos" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+              Ver todos <ArrowRight size={15} />
+            </a>
+          </div>
 
-            <motion.div {...reveal} className="space-y-8">
-              <div className="flex flex-wrap gap-3">
-                {trustLogos.map((logo) => (
-                  <div key={logo} className="rounded-full border border-slate-700 bg-slate-950/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-slate-300">
-                    {logo}
-                  </div>
-                ))}
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                  <ShieldCheck className="mb-3 text-cyan-300" size={24} />
-                  <div className="text-lg font-semibold text-white">Cumplimiento normativo</div>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">Protocolos de seguridad, medición y evaluación continua para instalaciones críticas.</p>
-                </div>
-                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                  <Zap className="mb-3 text-cyan-300" size={24} />
-                  <div className="text-lg font-semibold text-white">Eficiencia energétic</div>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">Optimización del consumo con análisis técnico y soluciones inteligentes.</p>
-                </div>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                {testimonials.map((quote) => (
-                  <div key={quote.name} className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5">
-                    <div className="mb-3 flex gap-1 text-cyan-300">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <Star key={`${quote.name}-${index}`} size={16} fill="currentColor" />
-                      ))}
-                    </div>
-                    <p className="text-sm leading-7 text-slate-300">“{quote.quote}”</p>
-                    <div className="mt-5">
-                      <div className="font-semibold text-white">{quote.name}</div>
-                      <div className="text-xs uppercase tracking-[0.22em] text-slate-400">{quote.role}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {news.map((item) => (
+              <article key={item.title} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
+                <div className="text-xs uppercase tracking-[0.2em] text-slate-400">{item.date}</div>
+                <h3 className="mt-4 text-xl font-semibold text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{item.excerpt}</p>
+                <a href="/recursos" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                  Leer más <ArrowRight size={15} />
+                </a>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section id="contacto" className="scroll-mt-24 mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-            <motion.div {...reveal} className="rounded-[30px] border border-slate-800 bg-slate-900/70 p-7">
-              <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Contacto</div>
-              <h2 className="mt-4 text-3xl font-black text-white">Cotiza tu proyecto con un equipo técnico de referencia.</h2>
-              <div className="mt-8 space-y-5">
-                <div className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <Phone className="mt-1 text-cyan-300" size={18} />
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Línea directa</div>
-                    <a href="tel:+56900000000" className="mt-2 block text-lg font-semibold text-white">+56 9 0000 0000</a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <MessageSquareText className="mt-1 text-cyan-300" size={18} />
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Atención rápida</div>
-                    <a href="https://wa.me/56900000000?text=Hola%20MAXTERMIC%2C%20necesito%20cotizar%20un%20proyecto%20de%20climatizaci%C3%B3n." target="_blank" rel="noreferrer" className="mt-2 block text-lg font-semibold text-white">WhatsApp comercial</a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                  <MapPin className="mt-1 text-cyan-300" size={18} />
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-slate-400">Sede / coordinación</div>
-                    <div className="mt-2 text-lg font-semibold text-white">Santiago, Chile</div>
-                  </div>
-                </div>
+        <section id="contacto" className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-6 lg:px-8">
+          <div className="rounded-[32px] border border-slate-800 bg-slate-900/70 p-8 sm:p-10">
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-xl">
+                <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Contacto</p>
+                <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Hablemos de tu proyecto</h2>
+                <p className="mt-4 text-slate-300">Te asesoramos en soluciones térmicas, eficiencia energética y continuidad operativa para infraestructura crítica.</p>
               </div>
-            </motion.div>
-
-            <motion.div {...reveal} className="rounded-[30px] border border-slate-800 bg-slate-900/70 p-7">
-              <form onSubmit={handleSubmit} className="grid gap-5">
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div>
-                    <label htmlFor="name" className="mb-2 block text-sm font-medium text-slate-200">Nombre</label>
-                    <input id="name" value={form.name} onChange={(event) => handleChange("name", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400" placeholder="Tu nombre" />
-                    {errors.name && <span className="mt-2 block text-xs text-rose-300">{errors.name}</span>}
-                  </div>
-                  <div>
-                    <label htmlFor="company" className="mb-2 block text-sm font-medium text-slate-200">Empresa</label>
-                    <input id="company" value={form.company} onChange={(event) => handleChange("company", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400" placeholder="Nombre de la empresa" />
-                  </div>
-                </div>
-
-                <div className="grid gap-5 md:grid-cols-2">
-                  <div>
-                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-slate-200">Email</label>
-                    <input id="email" type="email" value={form.email} onChange={(event) => handleChange("email", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400" placeholder="contacto@empresa.cl" />
-                    {errors.email && <span className="mt-2 block text-xs text-rose-300">{errors.email}</span>}
-                  </div>
-                  <div>
-                    <label htmlFor="phone" className="mb-2 block text-sm font-medium text-slate-200">Teléfono</label>
-                    <input id="phone" value={form.phone} onChange={(event) => handleChange("phone", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400" placeholder="+56 9 1234 5678" />
-                    {errors.phone && <span className="mt-2 block text-xs text-rose-300">{errors.phone}</span>}
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="mb-2 block text-sm font-medium text-slate-200">Necesidad del proyecto</label>
-                  <textarea id="message" value={form.message} onChange={(event) => handleChange("message", event.target.value)} rows={6} className="w-full rounded-2xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-white outline-none transition focus:border-cyan-400" placeholder="Detalle del tipo de instalación, superficie, prioridad y alcance requerido." />
-                  {errors.message && <span className="mt-2 block text-xs text-rose-300">{errors.message}</span>}
-                </div>
-
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <button type="submit" className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_28px_rgba(34,211,238,0.35)] transition hover:brightness-110">
-                    Enviar solicitud
-                    <ArrowRight size={16} />
-                  </button>
-                  {submitted && <span className="text-sm font-medium text-emerald-300">Solicitud enviada correctamente.</span>}
-                </div>
-              </form>
-            </motion.div>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a href="tel:+56900000000" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 px-5 py-3 text-sm font-semibold text-white">
+                  <Phone size={16} />
+                  Llamar ahora
+                </a>
+                <a href="/contacto" className="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950">
+                  Solicitar cotización
+                  <ArrowRight size={16} />
+                </a>
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
-      <div className="mx-auto max-w-7xl px-5 pb-16 pt-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-4 rounded-[28px] border border-slate-800 bg-slate-900/70 p-6 text-center sm:flex-row sm:text-left">
+      <footer className="border-t border-slate-800 bg-slate-950/90">
+        <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-6 lg:grid-cols-[1.3fr_0.7fr_0.7fr_1fr] lg:px-8">
           <div>
-            <div className="text-xs uppercase tracking-[0.28em] text-cyan-300">Acceso administrativo</div>
-            <h3 className="mt-2 text-2xl font-black text-white">Gestiona la galería de proyectos</h3>
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/40 bg-slate-900/80">
+                <div className="relative h-6 w-6">
+                  <div className="absolute left-0 top-1 h-4 w-1 rounded-full bg-cyan-300" />
+                  <div className="absolute right-0 top-0 h-6 w-1 rounded-full bg-sky-500" />
+                  <div className="absolute left-2 top-0 h-1.5 w-3 rounded-full bg-cyan-400" />
+                </div>
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/80">MAXTERMIC</div>
+                <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-300">Servicios de Climatización</div>
+              </div>
+            </div>
+            <p className="mt-5 max-w-sm text-sm leading-6 text-slate-300">
+              Soluciones técnicas en climatización industrial, comercial e infraestructura crítica, orientadas a eficiencia energética, continuidad operativa y resultados medibles.
+            </p>
           </div>
-          <a href="/admin/login" className="inline-flex items-center justify-center gap-2 rounded-full border border-cyan-400/40 bg-cyan-500/10 px-5 py-3 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-500/15">
-            Ingresar al panel
-            <ArrowRight size={16} />
-          </a>
-        </div>
-      </div>
 
-      <a href="https://wa.me/56900000000?text=Hola%20MAXTERMIC%2C%20quiero%20cotizar%20un%20proyecto%20de%20climatizaci%C3%B3n." target="_blank" rel="noreferrer" className="fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500 text-white shadow-[0_16px_30px_rgba(16,185,129,0.45)] transition hover:scale-105">
-        <MessageSquareText size={22} />
-      </a>
+          <div>
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Navegación</div>
+            <ul className="mt-5 space-y-3 text-sm text-slate-300">
+              {["Inicio", "Quiénes Somos", "Servicios", "Casos de Éxito", "Recursos", "Contacto"].map((item) => (
+                <li key={item}><a href={item === "Inicio" ? "/" : item === "Quiénes Somos" ? "/quienes-somos" : item === "Servicios" ? "/servicios" : item === "Casos de Éxito" ? "/casos-de-exito" : item === "Recursos" ? "/recursos" : "/contacto"} className="transition hover:text-white">{item}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Servicios</div>
+            <ul className="mt-5 space-y-3 text-sm text-slate-300">
+              {services.map((service) => (
+                <li key={service.title}><a href="/servicios" className="transition hover:text-white">{service.title}</a></li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Contacto</div>
+            <ul className="mt-5 space-y-3 text-sm text-slate-300">
+              <li><a href="tel:+56900000000">+56 9 0000 0000</a></li>
+              <li><a href="mailto:contacto@maxtermic.com">contacto@maxtermic.com</a></li>
+              <li>Santiago, Chile</li>
+              <li>Atención técnica 24/7</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-slate-800">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <span>© 2026 MAXTERMIC. Todos los derechos reservados.</span>
+            <div className="flex gap-4">
+              <a href="/politica-privacidad" className="transition hover:text-slate-200">Política de privacidad</a>
+              <a href="/terminos" className="transition hover:text-slate-200">Términos</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
