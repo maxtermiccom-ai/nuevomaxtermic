@@ -5,6 +5,7 @@ import {
   ArrowRight,
   BadgeCheck,
   Building2,
+  ChevronUp,
   Factory,
   Gauge,
   MapPin,
@@ -18,7 +19,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { ProjectRecord } from "@/lib/projects";
 import { projectCategories } from "@/lib/projects";
 import { SiteHeader } from "@/components/site-header";
@@ -120,6 +121,8 @@ const reveal = {
 
 export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
+  const [mounted, setMounted] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -131,6 +134,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+
+    const onScroll = () => setShowScrollTop(window.scrollY > 420);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === "Todos") return projects;
@@ -466,6 +478,16 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </div>
         </section>
       </main>
+
+      <button
+        type="button"
+        aria-label="Subir al inicio"
+        suppressHydrationWarning
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className={`fixed bottom-6 left-6 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full border border-cyan-400/50 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all duration-300 ${mounted && showScrollTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
+      >
+        <ChevronUp size={20} />
+      </button>
 
       <footer className="border-t border-slate-800 bg-slate-950/90">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-6 lg:grid-cols-[1.3fr_0.7fr_0.7fr_1fr] lg:px-8">

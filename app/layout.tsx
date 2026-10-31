@@ -3,6 +3,7 @@ import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import { PwaInstallPrompt } from "../components/pwa-install-prompt";
 import { PwaRegister } from "../components/pwa-register";
+import { WhatsAppFloat } from "../components/whatsapp-float";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full bg-slate-950 text-slate-100">
         <PwaRegister />
         {children}
+        <WhatsAppFloat />
         <PwaInstallPrompt />
       </body>
     </html>
