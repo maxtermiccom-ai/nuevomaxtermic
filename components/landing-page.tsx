@@ -8,11 +8,9 @@ import {
   Factory,
   Gauge,
   MapPin,
-  Menu,
   MessageSquareText,
   Phone,
   ShieldCheck,
-  X,
   Snowflake,
   Star,
   Thermometer,
@@ -20,9 +18,10 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ProjectRecord } from "@/lib/projects";
 import { projectCategories } from "@/lib/projects";
+import { SiteHeader } from "@/components/site-header";
 
 const services = [
   {
@@ -121,8 +120,6 @@ const reveal = {
 
 export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -135,19 +132,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 16);
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   const filteredProjects = useMemo(() => {
     if (activeCategory === "Todos") return projects;
     return projects.filter((project) => project.category === activeCategory);
   }, [activeCategory, projects]);
+
+  const featuredProjects = useMemo(() => {
+    const highlighted = projects.filter((project) => project.featured);
+    return highlighted.length > 0 ? highlighted.slice(0, 3) : projects.slice(0, 3);
+  }, [projects]);
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -205,97 +198,15 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
     }
   };
 
-  const featuredProjects = projects.slice(0, 3);
-
   return (
     <div className="relative overflow-x-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,210,255,0.12),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(96,165,250,0.18),_transparent_25%)]" />
 
-      <header
-        className={`sticky top-0 z-50 border-b transition-all duration-300 ${isScrolled ? "border-cyan-500/30 bg-slate-950/85 shadow-[0_12px_30px_rgba(2,6,23,0.55)] backdrop-blur-xl" : "border-slate-800/80 bg-slate-950/70 backdrop-blur-md"}`}
-      >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-6 lg:px-8">
-          <a href="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-400/40 bg-slate-900/80 shadow-[0_0_22px_rgba(0,210,255,0.35)]">
-              <div className="relative h-6 w-6">
-                <div className="absolute left-0 top-1 h-4 w-1 rounded-full bg-cyan-300" />
-                <div className="absolute right-0 top-0 h-6 w-1 rounded-full bg-sky-500" />
-                <div className="absolute left-2 top-0 h-1.5 w-3 rounded-full bg-cyan-400" />
-              </div>
-            </div>
-            <div>
-              <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/80">MAXTERMIC</div>
-              <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-slate-300">Servicios de Climatización</div>
-            </div>
-          </a>
-
-          <nav className="hidden items-center gap-8 text-sm text-slate-300 md:flex">
-            {[
-              ["Inicio", "/"],
-              ["Quiénes Somos", "/quienes-somos"],
-              ["Servicios", "/servicios"],
-              ["Casos de Éxito", "/casos-de-exito"],
-              ["Recursos", "/recursos"],
-              ["Contacto", "/contacto"],
-            ].map(([label, href]) => (
-              <a key={label} href={href} className="transition hover:text-white">
-                {label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="hidden items-center gap-3 md:flex">
-            <a href="tel:+56900000000" className="hidden rounded-full border border-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white sm:inline-flex">
-              Llamar ahora
-            </a>
-            <a href="#contacto" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.45)] transition hover:brightness-110">
-              Solicitar cotización
-              <ArrowRight size={16} />
-            </a>
-          </div>
-
-          <button
-            type="button"
-            aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={isMobileMenuOpen}
-            onClick={() => setIsMobileMenuOpen((current) => !current)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 transition hover:border-cyan-400/60 hover:text-cyan-200 md:hidden"
-          >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-
-        <div className={`${isMobileMenuOpen ? "block" : "hidden"} border-t border-slate-800 bg-slate-950/95 md:hidden`}>
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-5 py-4 sm:px-6">
-            {[
-              ["Inicio", "/"],
-              ["Quiénes Somos", "/quienes-somos"],
-              ["Servicios", "/servicios"],
-              ["Casos de Éxito", "/casos-de-exito"],
-              ["Recursos", "/recursos"],
-              ["Contacto", "/contacto"],
-            ].map(([label, href]) => (
-              <a
-                key={label}
-                href={href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="rounded-xl px-3 py-3 text-sm font-medium text-slate-200 transition hover:bg-slate-900 hover:text-white"
-              >
-                {label}
-              </a>
-            ))}
-            <div className="mt-2 grid gap-2 pt-2">
-              <a href="tel:+56900000000" className="rounded-xl border border-slate-700 px-4 py-3 text-center text-sm font-medium text-slate-100 transition hover:border-cyan-400/60">
-                Llamar ahora
-              </a>
-              <a href="#contacto" className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 px-4 py-3 text-sm font-semibold text-slate-950">
-                Solicitar cotización
-                <ArrowRight size={16} />
-              </a>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader
+        title="Servicios de Climatización"
+        ctaLabel="Solicitar cotización"
+        ctaHref="#contacto"
+      />
 
       <main>
         <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 pb-16 pt-12 sm:px-6 lg:grid-cols-[1.08fr_0.92fr] lg:px-8 lg:pb-20">

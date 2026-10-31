@@ -12,19 +12,67 @@ const initialForm = {
   client_name: "",
   description: "",
   details: "",
+  slug: "",
+  result_key: "",
+  featured: false,
   images: [] as string[],
 };
 
-const normalizeProject = (project: any): ProjectRecord => ({
-  id: project.id ?? crypto.randomUUID(),
-  title: project.title ?? "Proyecto sin título",
-  slug: project.slug ?? project.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ?? "proyecto",
-  category: project.category ?? "Industrial",
-  description: project.description ?? project.details ?? "Proyecto ejecutado por MAXTERMIC.",
-  client_name: project.client_name ?? "Cliente corporativo",
-  images: Array.isArray(project.images) ? project.images.filter(Boolean) : [],
-  created_at: project.created_at ?? new Date().toISOString(),
-});
+const projectDescriptionDelimiter = "___MAXTERMIC_DETAILS___";
+const projectResultDelimiter = "___MAXTERMIC_RESULT___";
+const projectFeatureDelimiter = "___MAXTERMIC_FEATURED___";
+
+const serializeProjectDescription = (summary: string, details: string, resultKey: string, featured: boolean) => {
+  const safeSummary = summary.trim() || "Proyecto ejecutado por MAXTERMIC.";
+  const safeDetails = details.trim();
+  const safeResultKey = resultKey.trim();
+
+  const chunks = [safeSummary];
+  if (safeDetails) chunks.push(`${projectDescriptionDelimiter}${safeDetails}`);
+  if (safeResultKey) chunks.push(`${projectResultDelimiter}${safeResultKey}`);
+  chunks.push(`${projectFeatureDelimiter}${featured ? "1" : "0"}`);
+
+  return chunks.join("");
+};
+
+const parseProjectDescription = (rawDescription?: string) => {
+  const summaryFallback = "Proyecto ejecutado por MAXTERMIC.";
+  if (!rawDescription) {
+    return { summary: summaryFallback, details: "", resultKey: "", featured: false };
+  }
+
+  const [summaryPart, ...rest] = rawDescription.split(projectDescriptionDelimiter);
+  const withoutSummary = rest.join(projectDescriptionDelimiter);
+  const [detailsPart, maybeResultPart] = withoutSummary.split(projectResultDelimiter);
+  const [detailsOnly, maybeFeaturedPart] = detailsPart.split(projectFeatureDelimiter);
+  const resultValue = maybeResultPart ? maybeResultPart.split(projectFeatureDelimiter)[0].trim() : "";
+  const featuredValue = maybeFeaturedPart ? maybeFeaturedPart.trim() : (maybeResultPart ? maybeResultPart.split(projectFeatureDelimiter)[1]?.trim() : "");
+
+  return {
+    summary: summaryPart.trim() || summaryFallback,
+    details: detailsOnly.trim(),
+    resultKey: resultValue,
+    featured: featuredValue === "1",
+  };
+};
+
+const normalizeProject = (project: any): ProjectRecord => {
+  const { summary, details, resultKey, featured } = parseProjectDescription(project.description);
+
+  return {
+    id: project.id ?? crypto.randomUUID(),
+    title: project.title ?? "Proyecto sin título",
+    slug: project.slug ?? project.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ?? "proyecto",
+    category: project.category ?? "Industrial",
+    description: summary,
+    details,
+    result_key: resultKey,
+    featured,
+    client_name: project.client_name ?? "Cliente corporativo",
+    images: Array.isArray(project.images) ? project.images.filter(Boolean) : [],
+    created_at: project.created_at ?? new Date().toISOString(),
+  };
+};
 
 export function AdminDashboard() {
   const [projects, setProjects] = useState<ProjectRecord[]>(mockProjects);
@@ -119,7 +167,7 @@ export function AdminDashboard() {
     }
   };
 
-  const handleInputChange = (field: keyof typeof initialForm, value: string | string[]) => {
+  const handleInputChange = (field: keyof typeof initialForm, value: string | string[] | boolean) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
@@ -179,23 +227,28 @@ export function AdminDashboard() {
       const uploadedUrls = await uploadImagesToStorage(selectedFiles);
       const finalImages = [...new Set([...remoteImages, ...uploadedUrls])];
 
+      const generatedSlug = (form.slug || form.title).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "proyecto-maxtermic";
       const payload = {
         title: form.title.trim(),
-        slug: form.title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "proyecto-maxtermic",
+        slug: generatedSlug,
         category: form.category,
         client_name: form.client_name.trim() || "Cliente corporativo",
-        description: form.description.trim() || form.details.trim() || "Proyecto ejecutado por MAXTERMIC.",
+        description: serializeProjectDescription(form.description, form.details, form.result_key, form.featured),
         images: finalImages.length > 0 ? finalImages : ["https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80"],
       };
 
       if (!isSupabaseConfigured || !supabase) {
+        const parsedPayload = parseProjectDescription(payload.description);
         const project: ProjectRecord = {
           id: editingId ?? crypto.randomUUID(),
           title: payload.title,
           slug: payload.slug,
           category: payload.category,
           client_name: payload.client_name,
-          description: payload.description,
+          description: parsedPayload.summary,
+          details: parsedPayload.details,
+          result_key: parsedPayload.resultKey,
+          featured: parsedPayload.featured,
           images: payload.images,
           created_at: new Date().toISOString(),
         };
@@ -239,7 +292,10 @@ export function AdminDashboard() {
       category: project.category as string,
       client_name: project.client_name ?? "",
       description: project.description,
-      details: project.description,
+      details: project.details ?? "",
+      slug: project.slug ?? "",
+      result_key: project.result_key ?? "",
+      featured: project.featured ?? false,
       images: project.images,
     });
     setSelectedFiles([]);
@@ -344,6 +400,17 @@ export function AdminDashboard() {
               </div>
             </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm text-slate-300">Slug URL</label>
+                <input value={form.slug} onChange={(event) => handleInputChange("slug", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="planta-de-procesamiento-minero" />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm text-slate-300">Resultado clave</label>
+                <input value={form.result_key} onChange={(event) => handleInputChange("result_key", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="+32% rendimiento" />
+              </div>
+            </div>
+
             <div>
               <label className="mb-2 block text-sm text-slate-300">Descripción breve</label>
               <textarea value={form.description} onChange={(event) => handleInputChange("description", event.target.value)} rows={4} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Explica alcance, tecnología y resultados del proyecto." />
@@ -352,6 +419,18 @@ export function AdminDashboard() {
             <div>
               <label className="mb-2 block text-sm text-slate-300">Especificaciones técnicas</label>
               <textarea value={form.details} onChange={(event) => handleInputChange("details", event.target.value)} rows={3} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Capacidad, sistemas aplicados, nivel de control, etc." />
+            </div>
+
+            <div className="rounded-2xl border border-slate-700 bg-slate-950/60 p-3">
+              <label className="flex cursor-pointer items-center justify-between gap-3 text-sm text-slate-200">
+                <span>Mostrar este proyecto en la sección destacada de Casos de Éxito</span>
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(event) => handleInputChange("featured", event.target.checked)}
+                  className="h-4 w-4 rounded border-slate-600 bg-slate-900 text-cyan-400 focus:ring-cyan-500"
+                />
+              </label>
             </div>
 
             <div>

@@ -6,6 +6,9 @@ export type ProjectRecord = {
   slug: string;
   category: ProjectCategory | string;
   description: string;
+  details?: string;
+  result_key?: string;
+  featured?: boolean;
   client_name?: string;
   images: string[];
   created_at: string;

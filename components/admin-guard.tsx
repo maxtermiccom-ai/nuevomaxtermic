@@ -11,9 +11,11 @@ export function AdminGuard() {
 
   useEffect(() => {
     const validateAccess = async () => {
+      const hasCookieAuth = document.cookie.split(";").some((cookie) => cookie.trim() === "maxtermic_admin_auth=true");
+      const hasLocalAuth = window.localStorage.getItem("maxtermic-admin-auth") === "true";
+
       if (!isSupabaseConfigured || !supabase) {
-        const token = window.localStorage.getItem("maxtermic-admin-auth");
-        if (token !== "true") {
+        if (!hasCookieAuth && !hasLocalAuth) {
           router.replace("/admin/login");
           return;
         }
@@ -22,7 +24,7 @@ export function AdminGuard() {
       }
 
       const session = await getSupabaseSession();
-      if (!session) {
+      if (!session && !hasCookieAuth && !hasLocalAuth) {
         router.replace("/admin/login");
         return;
       }
