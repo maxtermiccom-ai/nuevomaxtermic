@@ -620,17 +620,7 @@ export function AdminDashboard() {
         </section>
       </div>
 
-      <div className="rounded-[28px] border border-slate-800 bg-slate-900/70 p-6">
-        <div className="flex items-center gap-3 text-cyan-200">
-          <ShieldCheck size={18} />
-          <span className="text-sm uppercase tracking-[0.2em]">Integración con Supabase</span>
-        </div>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-300">
-          {isSupabaseConfigured
-            ? "Los proyectos se gestionan directamente con la tabla public.projects y el bucket project-gallery de Supabase."
-            : "La app está en modo demo. Configura NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY para habilitar la sincronización real con Supabase."}
-        </p>
-      </div>
+
     </div>
   );
 }
