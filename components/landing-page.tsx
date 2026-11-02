@@ -19,9 +19,10 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { ProjectImageViewer } from "@/components/project-image-viewer";
+import { SiteHeader } from "@/components/site-header";
 import type { ProjectRecord } from "@/lib/projects";
 import { projectCategories } from "@/lib/projects";
-import { SiteHeader } from "@/components/site-header";
 
 const services = [
   {
@@ -118,6 +119,26 @@ const reveal = {
   transition: { duration: 0.45 },
 };
 
+const projectDescriptionDelimiter = "___MAXTERMIC_DETAILS___";
+const projectResultDelimiter = "___MAXTERMIC_RESULT___";
+
+function parseProjectDescription(rawDescription?: string) {
+  const summaryFallback = "Proyecto ejecutado por MAXTERMIC.";
+  if (!rawDescription) {
+    return { summary: summaryFallback, details: "", resultKey: "" };
+  }
+
+  const [summaryPart, ...rest] = rawDescription.split(projectDescriptionDelimiter);
+  const withoutSummary = rest.join(projectDescriptionDelimiter);
+  const [detailsPart, maybeResult] = withoutSummary.split(projectResultDelimiter);
+
+  return {
+    summary: summaryPart.trim() || summaryFallback,
+    details: detailsPart.trim(),
+    resultKey: maybeResult?.trim() || "",
+  };
+}
+
 export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
   const [form, setForm] = useState({
@@ -138,8 +159,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   }, [activeCategory, projects]);
 
   const featuredProjects = useMemo(() => {
-    const highlighted = projects.filter((project) => project.featured);
-    return highlighted.length > 0 ? highlighted.slice(0, 3) : projects.slice(0, 3);
+    const highlighted = projects.filter((project) => project.featured === true);
+    return highlighted.slice(0, 3);
   }, [projects]);
 
   const handleChange = (field: keyof typeof form, value: string) => {
@@ -371,28 +392,49 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
             </a>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {featuredProjects.map((project) => (
-              <article key={project.id} className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70">
-                <div className="h-40 bg-gradient-to-br from-cyan-500/30 via-sky-500/20 to-slate-900 p-5">
-                  <div className="flex h-full items-end justify-between">
-                    <span className="rounded-full border border-cyan-400/30 bg-slate-950/60 px-2.5 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-200">
-                      {project.category}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-slate-300">Proyecto</span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-300">{project.description}</p>
-                  <div className="mt-5 h-px w-full bg-slate-800" />
-                  <a href="/casos-de-exito" className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
-                    Ver detalle <ArrowRight size={15} />
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+          {featuredProjects.length > 0 ? (
+            <div className="grid gap-6 lg:grid-cols-3">
+              {featuredProjects.map((project) => {
+                const parsedDescription = parseProjectDescription(project.description);
+                const summaryText = project.description ? parsedDescription.summary : "Proyecto ejecutado por MAXTERMIC.";
+                const highlightedResult = project.result_key || parsedDescription.resultKey || "Eficiencia operativa";
+
+                return (
+                  <article key={project.id} className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70 shadow-[0_20px_50px_rgba(2,6,23,0.45)]">
+                    <div className="border-b border-slate-800 bg-slate-950/40 p-3">
+                      <ProjectImageViewer images={project.images ?? []} projectTitle={project.title} compact />
+                    </div>
+
+                    <div className="p-6">
+                      <div className="mb-4 flex items-center justify-between gap-3">
+                        <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-300/80">{project.category}</div>
+                        {highlightedResult && (
+                          <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-cyan-200">
+                            {highlightedResult}
+                          </div>
+                        )}
+                      </div>
+                      <h3 className="text-2xl font-bold text-white">{project.title}</h3>
+                      <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{project.client_name ?? "Cliente corporativo"}</p>
+                      <p className="mt-4 text-sm leading-6 text-slate-300">{summaryText}</p>
+                      <div className="mt-6 flex items-center gap-3">
+                        <a href={`/casos-de-exito/${project.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                          Ver detalle <ArrowRight size={15} />
+                        </a>
+                        <a href="/contacto" className="text-sm font-medium text-slate-300 transition hover:text-white">
+                          Consultar caso
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 text-sm text-slate-300">
+              No hay proyectos destacados actualmente.
+            </div>
+          )}
         </section>
 
         <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">

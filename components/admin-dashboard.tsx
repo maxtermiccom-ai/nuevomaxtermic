@@ -57,14 +57,17 @@ const parseProjectDescription = (rawDescription?: string) => {
 };
 
 const normalizeProject = (project: any): ProjectRecord => {
-  const { summary, details, resultKey, featured } = parseProjectDescription(project.description);
+  const parsedDescription = parseProjectDescription(project.description);
+  const details = typeof project.details === "string" ? project.details : parsedDescription.details;
+  const resultKey = typeof project.result_key === "string" ? project.result_key : parsedDescription.resultKey;
+  const featured = typeof project.featured === "boolean" ? project.featured : parsedDescription.featured;
 
   return {
     id: project.id ?? crypto.randomUUID(),
     title: project.title ?? "Proyecto sin título",
     slug: project.slug ?? project.title?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ?? "proyecto",
     category: project.category ?? "Industrial",
-    description: summary,
+    description: parsedDescription.summary,
     details,
     result_key: resultKey,
     featured,
@@ -78,7 +81,8 @@ export function AdminDashboard() {
   const [projects, setProjects] = useState<ProjectRecord[]>(mockProjects);
   const [form, setForm] = useState(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<Array<{ file: File; preview: string }>>([]);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [contactEmail, setContactEmail] = useState("admin@maxtermic.cl");
@@ -99,7 +103,7 @@ export function AdminDashboard() {
     }
 
     if (!data || data.length === 0) {
-      setProjects(mockProjects);
+      setProjects([]);
       return;
     }
 
@@ -173,20 +177,64 @@ export function AdminDashboard() {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
-    setSelectedFiles((current) => [...current, ...files]);
+    if (files.length === 0) {
+      return;
+    }
 
-    const previews = files.map((file) => URL.createObjectURL(file));
-    setForm((current) => ({ ...current, images: [...current.images, ...previews] }));
+    const uploadedEntries = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+
+    setSelectedFiles((current) => [...current, ...uploadedEntries]);
+    setForm((current) => ({
+      ...current,
+      images: [...current.images, ...uploadedEntries.map((entry) => entry.preview)],
+    }));
+
+    event.target.value = "";
   };
 
-  const uploadImagesToStorage = async (files: File[]) => {
+  const removeImage = (index: number) => {
+    const removedImage = form.images[index];
+
+    setForm((current) => ({
+      ...current,
+      images: current.images.filter((_, imageIndex) => imageIndex !== index),
+    }));
+
+    setSelectedFiles((current) =>
+      current.filter((entry) => {
+        if (!removedImage) {
+          return true;
+        }
+
+        return entry.preview !== removedImage;
+      }),
+    );
+  };
+
+  const moveImage = (index: number, direction: "left" | "right") => {
+    const nextIndex = direction === "left" ? index - 1 : index + 1;
+    if (nextIndex < 0 || nextIndex >= form.images.length) {
+      return;
+    }
+
+    setForm((current) => {
+      const nextImages = [...current.images];
+      [nextImages[index], nextImages[nextIndex]] = [nextImages[nextIndex], nextImages[index]];
+      return { ...current, images: nextImages };
+    });
+  };
+
+  const uploadImagesToStorage = async (files: Array<{ file: File; preview: string }>) => {
     if (!isSupabaseConfigured || !supabase || files.length === 0) {
       return [];
     }
 
     const uploadedUrls: string[] = [];
 
-    for (const file of files) {
+    for (const { file } of files) {
       const safeName = file.name.replace(/\s+/g, "-").toLowerCase();
       const filePath = `projects/${Date.now()}-${safeName}`;
 
@@ -225,15 +273,25 @@ export function AdminDashboard() {
     try {
       const remoteImages = form.images.filter((image) => !image.startsWith("blob:"));
       const uploadedUrls = await uploadImagesToStorage(selectedFiles);
-      const finalImages = [...new Set([...remoteImages, ...uploadedUrls])];
+      const finalImages = Array.from(new Set([...remoteImages, ...uploadedUrls].filter(Boolean)));
 
       const generatedSlug = (form.slug || form.title).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "proyecto-maxtermic";
+      const duplicateSlug = projects.some((project) => project.slug === generatedSlug && project.id !== editingId);
+
+      if (duplicateSlug) {
+        setStatusMessage("Ya existe un proyecto con ese slug. Usa otro nombre o deja que el sistema genere uno único.");
+        return;
+      }
+
       const payload = {
         title: form.title.trim(),
         slug: generatedSlug,
         category: form.category,
         client_name: form.client_name.trim() || "Cliente corporativo",
         description: serializeProjectDescription(form.description, form.details, form.result_key, form.featured),
+        details: form.details.trim(),
+        result_key: form.result_key.trim(),
+        featured: form.featured,
         images: finalImages.length > 0 ? finalImages : ["https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80"],
       };
 
@@ -302,16 +360,20 @@ export function AdminDashboard() {
   };
 
   const handleDelete = async (projectId: string) => {
+    const confirmed = window.confirm("¿Deseas eliminar este proyecto? Esta acción no se puede deshacer.");
+    if (!confirmed) return;
+
     if (!isSupabaseConfigured || !supabase) {
       setProjects((current) => current.filter((project) => project.id !== projectId));
       if (editingId === projectId) resetForm();
+      setStatusMessage("Proyecto eliminado correctamente.");
       return;
     }
 
     try {
       const { error } = await supabase.from("projects").delete().eq("id", projectId);
       if (error) throw new Error(error.message);
-      setProjects((current) => current.filter((project) => project.id !== projectId));
+      await loadProjects();
       if (editingId === projectId) resetForm();
       setStatusMessage("Proyecto eliminado correctamente.");
     } catch (error) {
@@ -444,11 +506,61 @@ export function AdminDashboard() {
               {form.images.length > 0 && (
                 <div className="mt-4 grid grid-cols-3 gap-3">
                   {form.images.map((image, index) => (
-                    <img key={`${image}-${index}`} src={image} alt="Proyecto" className="h-24 w-full rounded-xl object-cover" />
+                    <div key={`${image}-${index}`} className="group relative overflow-hidden rounded-xl border border-slate-700 bg-slate-950/60">
+                      <button type="button" onClick={() => setPreviewImage(image)} className="block w-full text-left">
+                        <img src={image} alt={`Proyecto ${index + 1}`} className="h-24 w-full object-cover" />
+                      </button>
+
+                      <div className="absolute left-2 top-2 flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveImage(index, "left")}
+                          disabled={index === 0}
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-600 bg-slate-950/80 text-[10px] text-slate-200 transition hover:border-cyan-400/60 disabled:cursor-not-allowed disabled:opacity-40"
+                          aria-label={`Mover imagen ${index + 1} a la izquierda`}
+                        >
+                          ←
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveImage(index, "right")}
+                          disabled={index === form.images.length - 1}
+                          className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-600 bg-slate-950/80 text-[10px] text-slate-200 transition hover:border-cyan-400/60 disabled:cursor-not-allowed disabled:opacity-40"
+                          aria-label={`Mover imagen ${index + 1} a la derecha`}
+                        >
+                          →
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border border-rose-500/40 bg-slate-950/80 text-xs text-rose-200 transition hover:bg-rose-500/20"
+                        aria-label={`Eliminar imagen ${index + 1}`}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
+
+            {previewImage && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" onClick={() => setPreviewImage(null)}>
+                <div className="relative w-full max-w-4xl" onClick={(event) => event.stopPropagation()}>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(null)}
+                    className="absolute -right-2 -top-2 flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-950/90 text-lg text-white"
+                    aria-label="Cerrar vista previa"
+                  >
+                    ×
+                  </button>
+                  <img src={previewImage} alt="Vista previa del proyecto" className="max-h-[80vh] w-full rounded-2xl object-contain shadow-2xl" />
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3 pt-2">
               <button type="submit" disabled={loading} className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-70">

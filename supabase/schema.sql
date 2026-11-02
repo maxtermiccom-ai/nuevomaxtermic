@@ -6,6 +6,9 @@ create table if not exists public.projects (
   slug text not null unique,
   category text not null,
   description text,
+  details text,
+  result_key text,
+  featured boolean not null default false,
   client_name text,
   images text[] not null default '{}',
   created_at timestamptz not null default now()

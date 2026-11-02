@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ProjectImageViewer } from "@/components/project-image-viewer";
 import { SiteHeader } from "@/components/site-header";
 import { mockProjects, type ProjectRecord } from "@/lib/projects";
 import { getProjectsFromSupabase } from "@/lib/supabase";
@@ -27,8 +28,8 @@ function parseProjectDescription(rawDescription?: string) {
 
 async function getProjectBySlug(slug: string): Promise<ProjectRecord | null> {
   const supabaseProjects = await getProjectsFromSupabase();
-  const projectList = supabaseProjects && supabaseProjects.length > 0 ? supabaseProjects : mockProjects;
-  return projectList.find((project) => project.slug === slug) ?? null;
+  const projectList = supabaseProjects ?? mockProjects;
+  return projectList.find((project: ProjectRecord) => project.slug === slug) ?? null;
 }
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -68,12 +69,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-8 overflow-hidden rounded-[32px] border border-slate-800 bg-slate-900/70 shadow-[0_24px_60px_rgba(2,6,23,0.5)]">
           <div className="grid gap-0 lg:grid-cols-[1.25fr_0.75fr]">
-            <div className="h-[340px] overflow-hidden bg-slate-900 lg:h-full">
-              <img
-                src={project.images?.[0] ?? "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80"}
-                alt={project.title}
-                className="h-full w-full object-cover"
-              />
+            <div className="p-4 sm:p-5 lg:p-6">
+              <ProjectImageViewer images={project.images ?? []} projectTitle={project.title} />
             </div>
 
             <div className="p-6 sm:p-8 lg:p-10">
@@ -126,15 +123,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </section>
 
-        {project.images && project.images.length > 1 && (
-          <div className="mt-10 grid gap-5 md:grid-cols-2">
-            {project.images.slice(1).map((image, index) => (
-              <div key={`${project.id}-${index}`} className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/70">
-                <img src={image} alt={`${project.title} vista ${index + 2}`} className="h-64 w-full object-cover" />
-              </div>
-            ))}
-          </div>
-        )}
       </main>
     </div>
   );
