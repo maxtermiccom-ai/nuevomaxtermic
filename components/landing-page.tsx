@@ -260,7 +260,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
                 {[
                   { label: "Eficiencia térmica", value: "92.4%", accent: "from-cyan-400 to-blue-500" },
                   { label: "Consumo energético", value: "-18.7%", accent: "from-sky-500 to-indigo-500" },
-                  { label: "Temperatura stable", value: "22.4°C", accent: "from-cyan-500 to-teal-400" },
+                  { label: "Temperatura estable", value: "22.4°C", accent: "from-cyan-500 to-teal-400" },
                   { label: "Tiempo de respuesta", value: "< 9 min", accent: "from-blue-500 to-cyan-400" },
                 ].map((item) => (
                   <div key={item.label} className="rounded-2xl border border-slate-800 bg-slate-950/65 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
