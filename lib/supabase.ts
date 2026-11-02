@@ -6,8 +6,8 @@ const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? "";
 export const isSupabaseConfigured = Boolean(
   url &&
     anonKey &&
-    url !== "https://example.supabase.co" &&
-    anonKey !== "******",
+    url !== "https://vswmporuxdpfjfomlcjv.supabase.co" &&
+    anonKey !== "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZzd21wb3J1eGRwZmpmb21sY2p2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNzU3ODgsImV4cCI6MjEwODk1MTc4OH0.kow0K91axtd-xIJx2Zl-roePKgnAaI3D63bQfBTjkZU",
 );
 
 
