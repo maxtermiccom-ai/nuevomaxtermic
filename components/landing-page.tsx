@@ -5,7 +5,6 @@ import {
   ArrowRight,
   BadgeCheck,
   Building2,
-  ChevronUp,
   Factory,
   Gauge,
   MapPin,
@@ -19,7 +18,7 @@ import {
   Wrench,
   Zap,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { ProjectRecord } from "@/lib/projects";
 import { projectCategories } from "@/lib/projects";
 import { SiteHeader } from "@/components/site-header";
@@ -121,8 +120,6 @@ const reveal = {
 
 export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
-  const [mounted, setMounted] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -134,15 +131,6 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-
-    const onScroll = () => setShowScrollTop(window.scrollY > 420);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === "Todos") return projects;
@@ -211,7 +199,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
   };
 
   return (
-    <div className="relative overflow-x-hidden bg-slate-950 text-slate-100">
+    <div className="relative bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(0,210,255,0.12),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(96,165,250,0.18),_transparent_25%)]" />
 
       <SiteHeader
@@ -465,7 +453,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
                 <p className="mt-4 text-slate-300">Te asesoramos en soluciones térmicas, eficiencia energética y continuidad operativa para infraestructura crítica.</p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
-                <a href="tel:+56900000000" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 px-5 py-3 text-sm font-semibold text-white">
+                <a href="tel:+56967407770" className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-700 px-5 py-3 text-sm font-semibold text-white">
                   <Phone size={16} />
                   Llamar ahora
                 </a>
@@ -478,16 +466,6 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           </div>
         </section>
       </main>
-
-      <button
-        type="button"
-        aria-label="Subir al inicio"
-        suppressHydrationWarning
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-6 left-6 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full border border-cyan-400/50 bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)] transition-all duration-300 ${mounted && showScrollTop ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"}`}
-      >
-        <ChevronUp size={20} />
-      </button>
 
       <footer className="border-t border-slate-800 bg-slate-950/90">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 sm:px-6 lg:grid-cols-[1.3fr_0.7fr_0.7fr_1fr] lg:px-8">
@@ -531,7 +509,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <div>
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Contacto</div>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
-              <li><a href="tel:+56900000000">+56 9 0000 0000</a></li>
+              <li><a href="tel:+56967407770">+56967407770</a></li>
               <li><a href="mailto:contacto@maxtermic.com">contacto@maxtermic.com</a></li>
               <li>Santiago, Chile</li>
               <li>Atención técnica 24/7</li>

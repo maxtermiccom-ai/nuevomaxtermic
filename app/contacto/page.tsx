@@ -26,7 +26,7 @@ export default function ContactoPage() {
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Teléfono</label>
-                <input className="w-full rounded-2xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-slate-100 placeholder:text-slate-500" placeholder="+56 9 0000 0000" />
+                <input className="w-full rounded-2xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-slate-100 placeholder:text-slate-500" placeholder="+56967407770" />
               </div>
               <div className="sm:col-span-2">
                 <label className="mb-2 block text-sm text-slate-300">Servicio requerido</label>
