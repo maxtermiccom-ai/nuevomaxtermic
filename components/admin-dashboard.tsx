@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Cloud, Pencil, PlusCircle, ShieldCheck, Trash2, Upload } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { mockProjects, type ProjectRecord } from "@/lib/projects";
+import type { ProjectRecord } from "@/lib/projects";
 import { isSupabaseConfigured, projectSelectColumns, supabase } from "@/lib/supabase";
 
 const initialForm = {
@@ -78,7 +78,7 @@ const normalizeProject = (project: any): ProjectRecord => {
 };
 
 export function AdminDashboard() {
-  const [projects, setProjects] = useState<ProjectRecord[]>(mockProjects);
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [form, setForm] = useState(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<Array<{ file: File; preview: string }>>([]);
@@ -90,7 +90,7 @@ export function AdminDashboard() {
 
   const loadProjects = async () => {
     if (!isSupabaseConfigured || !supabase) {
-      setProjects(mockProjects);
+      setProjects([]);
       return;
     }
 
@@ -98,7 +98,7 @@ export function AdminDashboard() {
 
     if (error) {
       console.error("Supabase fetch error:", error.message);
-      setProjects(mockProjects);
+      setProjects([]);
       return;
     }
 

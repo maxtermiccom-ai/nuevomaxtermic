@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectImageViewer } from "@/components/project-image-viewer";
 import { SiteHeader } from "@/components/site-header";
-import { mockProjects, type ProjectRecord } from "@/lib/projects";
+import type { ProjectRecord } from "@/lib/projects";
 import { getProjectsFromSupabase } from "@/lib/supabase";
 
 const projectDescriptionDelimiter = "___MAXTERMIC_DETAILS___";
@@ -28,7 +28,7 @@ function parseProjectDescription(rawDescription?: string) {
 
 async function getProjectBySlug(slug: string): Promise<ProjectRecord | null> {
   const supabaseProjects = await getProjectsFromSupabase();
-  const projectList = supabaseProjects ?? mockProjects;
+  const projectList = supabaseProjects ?? [];
   return projectList.find((project: ProjectRecord) => project.slug === slug) ?? null;
 }
 

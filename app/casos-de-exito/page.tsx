@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { ProjectImageViewer } from "@/components/project-image-viewer";
 import { SiteHeader } from "@/components/site-header";
-import { mockProjects, projectCategories, type ProjectRecord } from "@/lib/projects";
+import { projectCategories, type ProjectRecord } from "@/lib/projects";
 import { getProjectsFromSupabase } from "@/lib/supabase";
 
 const projectDescriptionDelimiter = "___MAXTERMIC_DETAILS___";
@@ -29,7 +29,7 @@ function parseProjectDescription(rawDescription?: string) {
 
 export default function CasosPage() {
   const [activeCategory, setActiveCategory] = useState<(typeof projectCategories)[number]>("Todos");
-  const [projects, setProjects] = useState<ProjectRecord[]>(mockProjects);
+  const [projects, setProjects] = useState<ProjectRecord[]>([]);
 
   useEffect(() => {
     let active = true;
