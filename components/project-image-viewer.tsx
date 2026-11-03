@@ -76,64 +76,64 @@ export function ProjectImageViewer({
   return (
     <div className="overflow-hidden rounded-[30px] border border-slate-800 bg-slate-900/70 shadow-[0_24px_60px_rgba(2,6,23,0.45)]">
       <div className="relative">
-        <div className={`relative ${compact ? "h-64" : "h-[420px] sm:h-[500px]"} overflow-hidden bg-slate-950`}>
+        <div className={`relative ${compact ? "h-56 sm:h-64" : "h-[260px] sm:h-[360px] md:h-[420px] lg:h-[500px]"} overflow-hidden bg-slate-950`}>
           <button type="button" onClick={openLightbox} className="block h-full w-full text-left" aria-label="Abrir vista ampliada">
-            <img src={currentImage} alt={`${projectTitle} vista ${currentIndex + 1}`} className="h-full w-full object-cover transition duration-500 hover:scale-[1.02]" />
+            <img src={currentImage} alt={`${projectTitle} vista ${currentIndex + 1}`} className="h-full w-full object-cover object-center transition duration-500 hover:scale-[1.02]" />
           </button>
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
 
-          <div className="absolute left-4 top-1/2 flex -translate-y-1/2 items-center gap-2">
+          <div className="absolute left-3 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:left-4">
             <button
               type="button"
               onClick={() => handleNavigate("prev")}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-700 bg-slate-950/70 text-white shadow-lg backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-950/70 text-white shadow-lg backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200 sm:h-12 sm:w-12"
               aria-label="Imagen anterior"
             >
               <ChevronLeft size={20} />
             </button>
           </div>
 
-          <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-2">
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:right-4">
             <button
               type="button"
               onClick={() => handleNavigate("next")}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-700 bg-slate-950/70 text-white shadow-lg backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-950/70 text-white shadow-lg backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200 sm:h-12 sm:w-12"
               aria-label="Imagen siguiente"
             >
               <ChevronRight size={20} />
             </button>
           </div>
 
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-cyan-200 backdrop-blur-sm">
+          <div className="absolute inset-x-3 bottom-3 flex flex-col gap-2 sm:inset-x-4 sm:bottom-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="rounded-full border border-slate-700 bg-slate-950/70 px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-cyan-200 backdrop-blur-sm sm:px-3">
                 Visor de imágenes
               </div>
               {safeImages.length > 1 && (
                 <button
                   type="button"
                   onClick={toggleAutoPlay}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-slate-200 backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-950/70 px-2.5 py-1 text-[9px] uppercase tracking-[0.18em] text-slate-200 backdrop-blur-sm transition hover:border-cyan-400/60 hover:text-cyan-200 sm:px-3"
                 >
                   {isAutoPlay ? <Pause size={12} /> : <Play size={12} />}
                   {isAutoPlay ? "Pausar" : "Reproducir"}
                 </button>
               )}
             </div>
-            <div className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-slate-200 backdrop-blur-sm">
+            <div className="rounded-full border border-slate-700 bg-slate-950/70 px-2.5 py-1 text-[9px] uppercase tracking-[0.22em] text-slate-200 backdrop-blur-sm sm:px-3">
               {currentIndex + 1}/{safeImages.length}
             </div>
           </div>
         </div>
 
         <div className="border-t border-slate-800 bg-slate-950/50 p-3">
-          <div className="flex gap-3 overflow-x-auto pb-1">
+          <div className="flex gap-2 overflow-x-auto pb-1 sm:gap-3">
             {safeImages.map((image, index) => (
               <button
                 key={`${projectTitle}-${image}-${index}`}
                 type="button"
                 onClick={() => setCurrentIndex(index)}
-                className={`relative ${compact ? "h-14 w-20" : "h-20 w-28"} shrink-0 overflow-hidden rounded-xl border transition ${
+                className={`relative ${compact ? "h-14 w-20" : "h-16 w-24 sm:h-20 sm:w-28"} shrink-0 overflow-hidden rounded-xl border transition ${
                   index === currentIndex ? "border-cyan-400 shadow-[0_0_0_1px_rgba(34,211,238,0.5)]" : "border-slate-700 hover:border-slate-500"
                 }`}
                 aria-label={`Ver imagen ${index + 1}`}
@@ -147,19 +147,19 @@ export function ProjectImageViewer({
       </div>
 
       {isLightboxOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm" onClick={closeLightbox}>
-          <div className="relative w-full max-w-6xl rounded-[28px] border border-slate-700 bg-slate-950/95 p-3 shadow-[0_30px_80px_rgba(15,23,42,0.75)]" onClick={(event) => event.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-2 backdrop-blur-sm sm:p-4" onClick={closeLightbox}>
+          <div className="relative w-full max-w-6xl rounded-[28px] border border-slate-700 bg-slate-950/95 p-2 shadow-[0_30px_80px_rgba(15,23,42,0.75)] sm:p-3" onClick={(event) => event.stopPropagation()}>
             <button
               type="button"
               onClick={closeLightbox}
-              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-slate-600 bg-slate-900/80 text-slate-100 transition hover:border-cyan-400/70 hover:text-cyan-200"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-slate-600 bg-slate-900/80 text-slate-100 transition hover:border-cyan-400/70 hover:text-cyan-200 sm:right-4 sm:top-4 sm:h-10 sm:w-10"
               aria-label="Cerrar vista ampliada"
             >
               <X size={18} />
             </button>
 
             <div className="relative overflow-hidden rounded-[22px] bg-slate-950">
-              <div className="relative flex h-[70vh] max-h-[760px] items-center justify-center overflow-hidden bg-slate-950">
+              <div className="relative flex h-[56vh] min-h-[220px] max-h-[760px] items-center justify-center overflow-hidden bg-slate-950 sm:h-[70vh]">
                 <img
                   src={safeImages[currentIndex]}
                   alt={`${projectTitle} vista ${currentIndex + 1}`}
@@ -169,28 +169,28 @@ export function ProjectImageViewer({
               </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 px-2 pb-2">
-              <div className="flex items-center gap-2">
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-2 px-1 pb-1 sm:px-2 sm:pb-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setZoomLevel((value) => Math.max(1, Number((value - 0.25).toFixed(2))))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200 sm:h-10 sm:w-10"
                   aria-label="Disminuir zoom"
                 >
-                  <Minus size={18} />
+                  <Minus size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomLevel((value) => Math.min(2.5, Number((value + 0.25).toFixed(2))))}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200 sm:h-10 sm:w-10"
                   aria-label="Aumentar zoom"
                 >
-                  <Plus size={18} />
+                  <Plus size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => setZoomLevel(1)}
-                  className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-medium uppercase tracking-[0.18em] text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200 sm:px-3 sm:py-2 sm:text-xs"
                 >
                   Reset
                 </button>
@@ -198,9 +198,9 @@ export function ProjectImageViewer({
                   <button
                     type="button"
                     onClick={toggleAutoPlay}
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-[10px] font-medium uppercase tracking-[0.18em] text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-slate-200 hover:border-cyan-400/60 hover:text-cyan-200 sm:px-3 sm:py-2 sm:text-[10px]"
                   >
-                    {isAutoPlay ? <Pause size={14} /> : <Play size={14} />}
+                    {isAutoPlay ? <Pause size={12} /> : <Play size={12} />}
                     {isAutoPlay ? "Pausar" : "Play"}
                   </button>
                 )}
@@ -210,21 +210,21 @@ export function ProjectImageViewer({
                 <button
                   type="button"
                   onClick={() => handleNavigate("prev")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200 sm:h-10 sm:w-10"
                   aria-label="Imagen anterior"
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={16} />
                 </button>
-                <div className="rounded-full border border-slate-700 bg-slate-900 px-3 py-2 text-[10px] uppercase tracking-[0.22em] text-slate-200">
+                <div className="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.22em] text-slate-200 sm:px-3 sm:py-2 sm:text-[10px]">
                   {currentIndex + 1}/{safeImages.length}
                 </div>
                 <button
                   type="button"
                   onClick={() => handleNavigate("next")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-700 bg-slate-900 text-slate-100 hover:border-cyan-400/60 hover:text-cyan-200 sm:h-10 sm:w-10"
                   aria-label="Imagen siguiente"
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             </div>

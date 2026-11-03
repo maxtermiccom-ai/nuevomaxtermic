@@ -62,28 +62,28 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     <div className="bg-slate-950 text-slate-100">
       <SiteHeader title="Casos de éxito" ctaLabel="Cotizar proyecto" ctaHref="/contacto" />
 
-      <main className="mx-auto max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
         <Link href="/casos-de-exito" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300 transition hover:text-cyan-200">
           <ArrowLeft size={15} /> Volver a casos
         </Link>
 
-        <div className="mt-8 overflow-hidden rounded-[32px] border border-slate-800 bg-slate-900/70 shadow-[0_24px_60px_rgba(2,6,23,0.5)]">
+        <div className="mt-8 overflow-hidden rounded-[28px] border border-slate-800 bg-slate-900/70 shadow-[0_24px_60px_rgba(2,6,23,0.5)]">
           <div className="grid gap-0 lg:grid-cols-[1.25fr_0.75fr]">
-            <div className="p-4 sm:p-5 lg:p-6">
+            <div className="min-w-0 p-3 sm:p-4 lg:p-6">
               <ProjectImageViewer images={project.images ?? []} projectTitle={project.title} />
             </div>
 
-            <div className="p-6 sm:p-8 lg:p-10">
-              <div className="text-[10px] uppercase tracking-[0.25em] text-cyan-300/80">{project.category}</div>
-              <h1 className="mt-4 text-3xl font-black tracking-[-0.04em] text-white sm:text-4xl">{project.title}</h1>
-              <p className="mt-3 text-sm uppercase tracking-[0.16em] text-slate-400">{project.client_name ?? "Cliente corporativo"}</p>
-              <p className="mt-6 text-base leading-7 text-slate-300">{summaryText}</p>
+            <div className="min-w-0 p-5 sm:p-7 lg:p-10">
+              <div className="text-[9px] uppercase tracking-[0.22em] text-cyan-300/80 sm:text-[10px]">{project.category}</div>
+              <h1 className="mt-4 text-2xl font-black tracking-[-0.04em] text-white sm:text-4xl">{project.title}</h1>
+              <p className="mt-3 text-xs uppercase tracking-[0.14em] text-slate-400 sm:text-sm">{project.client_name ?? "Cliente corporativo"}</p>
+              <p className="mt-5 text-sm leading-7 text-slate-300 sm:mt-6 sm:text-base">{summaryText}</p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/contacto" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.35)]">
+              <div className="mt-7 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
+                <Link href="/contacto" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_0_35px_rgba(34,211,238,0.35)] sm:w-auto">
                   Solicitar cotización <ArrowRight size={15} />
                 </Link>
-                <Link href="/casos-de-exito" className="inline-flex items-center rounded-full border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white">
+                <Link href="/casos-de-exito" className="inline-flex w-full items-center justify-center rounded-full border border-slate-700 px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-cyan-400/60 hover:text-white sm:w-auto">
                   Ver otros casos
                 </Link>
               </div>
@@ -91,30 +91,30 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        <section className="mt-10 grid gap-5 md:grid-cols-3">
+        <section className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-3 md:gap-5">
           {[
             { label: "Resultado clave", value: resultKey || "Eficiencia operativa", detail: "Optimización del desempeño del sistema" },
             { label: "Ámbito", value: project.category || "Infraestructura crítica", detail: "Diseño orientado a continuidad" },
             { label: "Impacto", value: "Ejecución institucional", detail: "Mejora de consumo y estabilidad" },
           ].map((item) => (
-            <div key={item.label} className="rounded-3xl border border-slate-800 bg-slate-900/70 p-6">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-300/80">{item.label}</div>
-              <div className="mt-4 text-2xl font-black text-white">{item.value}</div>
+            <div key={item.label} className="rounded-[24px] border border-slate-800 bg-slate-900/70 p-5 sm:p-6">
+              <div className="text-[9px] uppercase tracking-[0.2em] text-cyan-300/80 sm:text-[10px]">{item.label}</div>
+              <div className="mt-4 text-xl font-black text-white sm:text-2xl">{item.value}</div>
               <p className="mt-2 text-sm leading-6 text-slate-300">{item.detail}</p>
             </div>
           ))}
         </section>
 
-        <section className="mt-10 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[28px] border border-slate-800 bg-slate-900/70 p-7">
-            <div className="text-[10px] uppercase tracking-[0.25em] text-cyan-300/80">Resumen ejecutivo</div>
-            <h2 className="mt-4 text-2xl font-black text-white">Solución adaptada a la operación real</h2>
+        <section className="mt-8 grid gap-4 sm:mt-10 lg:grid-cols-2 lg:gap-6">
+          <div className="rounded-[24px] border border-slate-800 bg-slate-900/70 p-5 sm:p-7">
+            <div className="text-[9px] uppercase tracking-[0.22em] text-cyan-300/80 sm:text-[10px]">Resumen ejecutivo</div>
+            <h2 className="mt-4 text-xl font-black text-white sm:text-2xl">Solución adaptada a la operación real</h2>
             <p className="mt-4 text-sm leading-7 text-slate-300">{summaryText}</p>
           </div>
 
-          <div className="rounded-[28px] border border-slate-800 bg-slate-900/70 p-7">
-            <div className="text-[10px] uppercase tracking-[0.25em] text-cyan-300/80">Entrega</div>
-            <h2 className="mt-4 text-2xl font-black text-white">Trabajo con control, trazabilidad y respaldo</h2>
+          <div className="rounded-[24px] border border-slate-800 bg-slate-900/70 p-5 sm:p-7">
+            <div className="text-[9px] uppercase tracking-[0.22em] text-cyan-300/80 sm:text-[10px]">Entrega</div>
+            <h2 className="mt-4 text-xl font-black text-white sm:text-2xl">Trabajo con control, trazabilidad y respaldo</h2>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
               {detailItems.map((item: string) => (
                 <li key={item}>• {item}</li>
