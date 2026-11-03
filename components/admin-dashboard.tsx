@@ -85,7 +85,7 @@ export function AdminDashboard() {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
-  const [contactEmail, setContactEmail] = useState("admin@maxtermic.cl");
+  const [contactEmail, setContactEmail] = useState("r.alva@maxtermic.com");
   const [savingContactEmail, setSavingContactEmail] = useState(false);
 
   const loadProjects = async () => {

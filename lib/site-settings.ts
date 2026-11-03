@@ -4,7 +4,7 @@ import path from "path";
 const SETTINGS_PATH = path.join(process.cwd(), "data", "site-settings.json");
 
 const defaultSettings = {
-  contactEmail: process.env.CONTACT_TO_EMAIL ?? "admin@maxtermic.cl",
+  contactEmail: process.env.CONTACT_TO_EMAIL ?? "r.alva@maxtermic.com",
 };
 
 async function ensureSettingsFile() {
@@ -25,7 +25,7 @@ export async function getSiteSettings() {
     const parsed = JSON.parse(content) as Partial<typeof defaultSettings>;
 
     return {
-      contactEmail: parsed.contactEmail || defaultSettings.contactEmail,
+      contactEmail: process.env.CONTACT_TO_EMAIL ?? parsed.contactEmail ?? defaultSettings.contactEmail,
     };
   } catch {
     return { ...defaultSettings };
