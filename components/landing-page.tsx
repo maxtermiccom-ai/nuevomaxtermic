@@ -552,7 +552,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Contacto</div>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
               <li><a href="tel:+56967407770">+56967407770</a></li>
-              <li><a href="mailto:contacto@maxtermic.com">contacto@maxtermic.com</a></li>
+              <li><a href="mailto:r.alva@maxtermic.com">r.alva@maxtermic.com</a></li>
               <li>Santiago, Chile</li>
               <li>Atención técnica 24/7</li>
             </ul>

@@ -43,7 +43,7 @@ export function SiteHeader({
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-6 lg:px-8">
           <a href="/" className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-cyan-400/40 bg-slate-900/80 shadow-[0_0_22px_rgba(0,210,255,0.35)]">
-              <img src="/logo-maxtermic.png" alt="MAXTERMIC logo" className="h-full w-full object-cover" />
+              <img src="/logo-maxtermic.png" alt="Logo de MAXTERMIC, climatización industrial y mantenimiento" className="h-full w-full object-cover" />
             </div>
             <div>
               <div className="text-xs uppercase tracking-[0.35em] text-cyan-300/80">MAXTERMIC</div>

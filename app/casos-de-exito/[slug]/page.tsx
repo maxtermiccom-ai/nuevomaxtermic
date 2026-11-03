@@ -32,6 +32,25 @@ async function getProjectBySlug(slug: string): Promise<ProjectRecord | null> {
   return projectList.find((project: ProjectRecord) => project.slug === slug) ?? null;
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+
+  if (!project) {
+    return {
+      title: "Proyecto no encontrado | MAXTERMIC",
+      description: "Proyecto no encontrado en el portafolio de MAXTERMIC.",
+      alternates: { canonical: `/casos-de-exito/${slug}` },
+    };
+  }
+
+  return {
+    title: `${project.title} | Casos de éxito MAXTERMIC`,
+    description: project.description ? parseProjectDescription(project.description).summary : `Caso de éxito de ${project.title} realizado por MAXTERMIC.`,
+    alternates: { canonical: `/casos-de-exito/${project.slug}` },
+  };
+}
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);

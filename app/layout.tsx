@@ -22,16 +22,47 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: "cover",
   userScalable: false,
+  themeColor: "#061a2d",
 };
 
 export const metadata: Metadata = {
-  title: "MAXTERMIC | Servicios de Climatización",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.maxtermic.com"),
+  title: {
+    default: "MAXTERMIC | Climatización industrial y mantenimiento en Chile",
+    template: "%s | MAXTERMIC",
+  },
   description:
-    "Landing web profesional para MAXTERMIC, especializada en climatización industrial, comercial e infraestructura crítica.",
+    "MAXTERMIC ofrece climatización industrial, comercial e infraestructura crítica, con soluciones de mantenimiento, eficiencia energética y soporte técnico en Chile.",
   applicationName: "MAXTERMIC",
   manifest: "/manifest.webmanifest",
-  themeColor: "#061a2d",
-  colorScheme: "dark",
+  keywords: [
+    "climatización industrial",
+    "climatización comercial",
+    "mantenimiento HVAC",
+    "ventilación mecánica",
+    "chiller",
+    "torres de enfriamiento",
+    "infraestructura crítica",
+    "MAXTERMIC Chile",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "MAXTERMIC | Climatización industrial y mantenimiento en Chile",
+    description:
+      "Soluciones de climatización industrial, comercial e infraestructura crítica para proyectos que requieren continuidad operativa, eficiencia energética y soporte técnico de confianza.",
+    url: "/",
+    siteName: "MAXTERMIC",
+    locale: "es_CL",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MAXTERMIC | Climatización industrial y mantenimiento en Chile",
+    description:
+      "Soluciones de climatización industrial, comercial e infraestructura crítica para proyectos que requieren continuidad operativa, eficiencia energética y soporte técnico de confianza.",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",

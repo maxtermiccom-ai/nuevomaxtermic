@@ -1,5 +1,15 @@
 import { ArrowRight, BadgeCheck, Building2, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
+import { SeoSchema } from "@/components/seo-schema";
 import { SiteHeader } from "@/components/site-header";
+
+export const metadata = {
+  title: "Quiénes somos",
+  description:
+    "Conoce a MAXTERMIC, empresa especializada en climatización industrial, mantenimiento y soluciones térmicas para infraestructura crítica en Chile.",
+  alternates: {
+    canonical: "/quienes-somos",
+  },
+};
 
 const values = [
   { icon: ShieldCheck, title: "Seguridad", text: "Trabajamos con estándares técnicos rigurosos y protocolos responsables para cada proyecto." },
@@ -15,11 +25,24 @@ const leadership = [
 ];
 
 export default function QuienesSomosPage() {
-  return (
-    <div className="bg-slate-950 text-slate-100">
-      <SiteHeader title="Quiénes Somos" ctaLabel="Contactar" ctaHref="/contacto" />
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "MAXTERMIC",
+    url: "https://www.maxtermic.com",
+    description:
+      "Empresa especializada en climatización industrial, comercial e infraestructura crítica en Chile.",
+    areaServed: "CL",
+    sameAs: ["https://www.maxtermic.com"],
+  };
 
-      <main>
+  return (
+    <>
+      <SeoSchema data={organizationSchema} />
+      <div className="bg-slate-950 text-slate-100">
+        <SiteHeader title="Quiénes Somos" ctaLabel="Contactar" ctaHref="/contacto" />
+
+        <main>
         <section className="mx-auto max-w-7xl px-5 pb-16 pt-12 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
@@ -159,7 +182,8 @@ export default function QuienesSomosPage() {
             </div>
           </div>
         </section>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }

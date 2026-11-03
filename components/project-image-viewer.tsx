@@ -78,7 +78,7 @@ export function ProjectImageViewer({
       <div className="relative">
         <div className={`relative ${compact ? "h-56 sm:h-64" : "h-[260px] sm:h-[360px] md:h-[420px] lg:h-[500px]"} overflow-hidden bg-slate-950`}>
           <button type="button" onClick={openLightbox} className="block h-full w-full text-left" aria-label="Abrir vista ampliada">
-            <img src={currentImage} alt={`${projectTitle} vista ${currentIndex + 1}`} className="h-full w-full object-cover object-center transition duration-500 hover:scale-[1.02]" />
+            <img src={currentImage} alt={`${projectTitle}: vista ${currentIndex + 1} de un proyecto de MAXTERMIC`} className="h-full w-full object-cover object-center transition duration-500 hover:scale-[1.02]" />
           </button>
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
 
@@ -138,7 +138,7 @@ export function ProjectImageViewer({
                 }`}
                 aria-label={`Ver imagen ${index + 1}`}
               >
-                <img src={image} alt={`${projectTitle} thumbnail ${index + 1}`} className="h-full w-full object-cover" />
+                <img src={image} alt={`${projectTitle}: miniatura ${index + 1} de una solución de MAXTERMIC`} className="h-full w-full object-cover" />
                 {index === currentIndex && <div className="absolute inset-0 ring-2 ring-inset ring-cyan-400/70" />}
               </button>
             ))}
@@ -162,7 +162,7 @@ export function ProjectImageViewer({
               <div className="relative flex h-[56vh] min-h-[220px] max-h-[760px] items-center justify-center overflow-hidden bg-slate-950 sm:h-[70vh]">
                 <img
                   src={safeImages[currentIndex]}
-                  alt={`${projectTitle} vista ${currentIndex + 1}`}
+                  alt={`${projectTitle}: vista ${currentIndex + 1} ampliada de un proyecto de MAXTERMIC`}
                   className="max-h-full max-w-full object-contain transition-transform duration-200"
                   style={{ transform: `scale(${zoomLevel})` }}
                 />
