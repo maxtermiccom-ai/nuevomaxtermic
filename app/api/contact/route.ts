@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message:
-            "La entrega de correos aún no está configurada en el servidor. Define SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS y SMTP_FROM.",
+            "La entrega de correos aún no está configurada en el servidor. Define SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS y SMTP_FROM. Revisa el diagnóstico en /api/debug-env.",
         },
         { status: 500 },
       );
