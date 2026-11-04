@@ -87,7 +87,7 @@ export function CasosPageClient({ initialProjects }: { initialProjects: ProjectR
                   <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{project.client_name ?? "Cliente corporativo"}</p>
                   <p className="mt-4 text-sm leading-6 text-slate-300">{summaryText}</p>
                   <div className="mt-6 flex items-center gap-3">
-                    <a href={`/casos-de-exito/${project.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                    <a href={`/obras-ejecutadas/${project.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
                       Ver detalle <ArrowRight size={15} />
                     </a>
                     <a href="/contacto" className="text-sm font-medium text-slate-300 transition hover:text-white">

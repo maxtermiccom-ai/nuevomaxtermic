@@ -1,4 +1,4 @@
-import { ArrowRight, Building2, Factory, Gauge, Snowflake, Wrench } from "lucide-react";
+import { ArrowRight, Building2, Factory, Flame, Gauge, Snowflake, Thermometer, Wrench } from "lucide-react";
 import { SeoSchema } from "@/components/seo-schema";
 import { SiteHeader } from "@/components/site-header";
 
@@ -21,6 +21,26 @@ const services = [
     icon: Snowflake,
     title: "Chiller & Torres de Enfriamiento",
     text: "Soluciones térmicas para edificios, campus y proyectos de gran escala con alta continuidad operativa.",
+  },
+  {
+    icon: Flame,
+    title: "Sistemas de Calefacción",
+    text: "Diseño y ejecución de soluciones térmicas para mantener confort y estabilidad en espacios industriales y comerciales.",
+  },
+  {
+    icon: Building2,
+    title: "Sala de Calderas",
+    text: "Instalación y puesta en marcha de salas de calderas con distribución segura, eficiente y conforme a las exigencias de operación.",
+  },
+  {
+    icon: Thermometer,
+    title: "Losa Radiante",
+    text: "Sistemas de calefacción por suelo radiante para lograr confort uniforme, ahorro energético y mejor aprovechamiento del espacio.",
+  },
+  {
+    icon: Gauge,
+    title: "Radiadores",
+    text: "Soluciones de calefacción con radiadores para edificios y áreas de trabajo que requieren rapidez de respuesta y alta confiabilidad.",
   },
   {
     icon: Building2,

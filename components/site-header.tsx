@@ -7,7 +7,7 @@ const navItems = [
   ["Inicio", "/"],
   ["Quiénes Somos", "/quienes-somos"],
   ["Servicios", "/servicios"],
-  ["Casos de Éxito", "/casos-de-exito"],
+  ["Obras Ejecutadas", "/obras-ejecutadas"],
   ["Recursos", "/recursos"],
   ["Contacto", "/contacto"],
 ] as const;

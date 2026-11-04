@@ -26,7 +26,9 @@ const contactSchema = {
   email: "r.alva@maxtermic.com",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "Santiago",
+    streetAddress: "Av. Providencia 1208, Of. 207",
+    addressLocality: "Providencia",
+    addressRegion: "Santiago",
     addressCountry: "CL",
   },
   areaServed: "Chile",

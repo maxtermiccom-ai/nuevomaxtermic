@@ -485,7 +485,7 @@ export function AdminDashboard() {
 
             <div className="rounded-2xl border border-slate-700 bg-slate-950/60 p-3">
               <label className="flex cursor-pointer items-center justify-between gap-3 text-sm text-slate-200">
-                <span>Mostrar este proyecto en la sección destacada de Casos de Éxito</span>
+                <span>Mostrar este proyecto en la sección destacada de Obras Ejecutadas</span>
                 <input
                   type="checkbox"
                   checked={form.featured}

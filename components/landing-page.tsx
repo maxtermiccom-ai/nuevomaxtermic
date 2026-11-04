@@ -384,10 +384,10 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
         <section className="mx-auto max-w-7xl px-5 py-20 sm:px-6 lg:px-8">
           <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
-              <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Casos de éxito</p>
+              <p className="text-xs uppercase tracking-[0.28em] text-cyan-300/80">Obras Ejecutadas</p>
               <h2 className="mt-3 text-3xl font-black text-white sm:text-4xl">Proyectos con impacto real en operación y eficiencia</h2>
             </div>
-            <a href="/casos-de-exito" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+            <a href="/obras-ejecutadas" className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
               Ver portafolio <ArrowRight size={15} />
             </a>
           </div>
@@ -418,7 +418,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
                       <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{project.client_name ?? "Cliente corporativo"}</p>
                       <p className="mt-4 text-sm leading-6 text-slate-300">{summaryText}</p>
                       <div className="mt-6 flex items-center gap-3">
-                        <a href={`/casos-de-exito/${project.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
+                        <a href={`/obras-ejecutadas/${project.slug}`} className="inline-flex items-center gap-2 text-sm font-medium text-cyan-300">
                           Ver detalle <ArrowRight size={15} />
                         </a>
                         <a href="/contacto" className="text-sm font-medium text-slate-300 transition hover:text-white">
@@ -533,8 +533,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <div>
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Navegación</div>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
-              {["Inicio", "Quiénes Somos", "Servicios", "Casos de Éxito", "Recursos", "Contacto"].map((item) => (
-                <li key={item}><a href={item === "Inicio" ? "/" : item === "Quiénes Somos" ? "/quienes-somos" : item === "Servicios" ? "/servicios" : item === "Casos de Éxito" ? "/casos-de-exito" : item === "Recursos" ? "/recursos" : "/contacto"} className="transition hover:text-white">{item}</a></li>
+              {["Inicio", "Quiénes Somos", "Servicios", "Obras Ejecutadas", "Recursos", "Contacto"].map((item) => (
+                <li key={item}><a href={item === "Inicio" ? "/" : item === "Quiénes Somos" ? "/quienes-somos" : item === "Servicios" ? "/servicios" : item === "Obras Ejecutadas" ? "/obras-ejecutadas" : item === "Recursos" ? "/recursos" : "/contacto"} className="transition hover:text-white">{item}</a></li>
               ))}
             </ul>
           </div>

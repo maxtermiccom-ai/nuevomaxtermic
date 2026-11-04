@@ -152,9 +152,9 @@ export function ContactForm({ faqItems }: ContactFormProps) {
                 <h2 className="text-lg font-semibold text-white">Contacto directo</h2>
               </div>
               <ul className="mt-5 space-y-4 text-sm text-slate-300">
-                <li>+56967407770</li>
+                <li>+56 9 7500 571</li>
                 <li>r.alva@maxtermic.com</li>
-                <li>Santiago, Chile</li>
+                <li>Av. Providencia 1208, Of. 207, Providencia, Santiago, Chile</li>
               </ul>
             </div>
 
@@ -163,7 +163,7 @@ export function ContactForm({ faqItems }: ContactFormProps) {
                 <MapPin size={18} />
                 <h2 className="text-lg font-semibold text-white">Sede</h2>
               </div>
-              <p className="mt-5 text-sm leading-6 text-slate-300">Santiago Centro, Chile.</p>
+              <p className="mt-5 text-sm leading-6 text-slate-300">Av. Providencia 1208, Of. 207, Providencia, Santiago, Chile.</p>
             </div>
 
             <div className="rounded-[30px] border border-slate-800 bg-slate-900/70 p-6">
