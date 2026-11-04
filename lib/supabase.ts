@@ -10,7 +10,6 @@ export const isSupabaseConfigured = Boolean(
     anonKey !== "******",
 );
 
-
 export const supabase = isSupabaseConfigured
   ? createClient(url, anonKey, {
       auth: {
@@ -39,7 +38,7 @@ export const projectSelectColumns = "id, title, slug, category, description, det
 
 export async function getProjectsFromSupabase() {
   if (!supabase) {
-    return null;
+    return [];
   }
 
   let response: any = await supabase
@@ -56,7 +55,7 @@ export async function getProjectsFromSupabase() {
 
   if (response.error) {
     console.error("Error loading projects from Supabase:", response.error.message);
-    return null;
+    return [];
   }
 
   return response.data ?? [];

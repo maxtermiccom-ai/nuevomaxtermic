@@ -1,7 +1,5 @@
-import { CasosPageClient } from "@/components/casos-page-client";
+import { ObrasEjecutadasPageClient } from "@/components/obras-ejecutadas-page";
 import { SeoSchema } from "@/components/seo-schema";
-import { SiteHeader } from "@/components/site-header";
-import { getProjectsFromSupabase } from "@/lib/supabase";
 
 export const metadata = {
   title: "Obras Ejecutadas | Proyectos de climatización y eficiencia energética",
@@ -21,14 +19,11 @@ const collectionSchema = {
   url: "https://www.maxtermic.com/obras-ejecutadas",
 };
 
-export default async function ObrasEjecutadasPage() {
-  const projects = (await getProjectsFromSupabase()) ?? [];
-
+export default function ObrasEjecutadasPage() {
   return (
     <>
       <SeoSchema data={collectionSchema} />
-      <SiteHeader title="Obras Ejecutadas" ctaLabel="Cotizar proyecto" ctaHref="/contacto" />
-      <CasosPageClient initialProjects={projects} />
+      <ObrasEjecutadasPageClient />
     </>
   );
 }
