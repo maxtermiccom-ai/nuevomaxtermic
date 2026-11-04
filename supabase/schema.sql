@@ -7,12 +7,15 @@ create table if not exists public.projects (
   category text not null,
   description text,
   details text,
+  location text,
   result_key text,
   featured boolean not null default false,
   client_name text,
   images text[] not null default '{}',
   created_at timestamptz not null default now()
 );
+
+alter table public.projects add column if not exists location text;
 
 alter table public.projects enable row level security;
 

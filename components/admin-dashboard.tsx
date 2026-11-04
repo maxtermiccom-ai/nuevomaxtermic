@@ -10,6 +10,7 @@ const initialForm = {
   title: "",
   category: "Industrial",
   client_name: "",
+  location: "",
   description: "",
   details: "",
   slug: "",
@@ -69,6 +70,7 @@ const normalizeProject = (project: any): ProjectRecord => {
     category: project.category ?? "Industrial",
     description: parsedDescription.summary,
     details,
+    location: project.location ?? "",
     result_key: resultKey,
     featured,
     client_name: project.client_name ?? "Cliente corporativo",
@@ -288,6 +290,7 @@ export function AdminDashboard() {
         slug: generatedSlug,
         category: form.category,
         client_name: form.client_name.trim() || "Cliente corporativo",
+        location: form.location.trim(),
         description: serializeProjectDescription(form.description, form.details, form.result_key, form.featured),
         details: form.details.trim(),
         result_key: form.result_key.trim(),
@@ -303,6 +306,7 @@ export function AdminDashboard() {
           slug: payload.slug,
           category: payload.category,
           client_name: payload.client_name,
+          location: payload.location,
           description: parsedPayload.summary,
           details: parsedPayload.details,
           result_key: parsedPayload.resultKey,
@@ -349,6 +353,7 @@ export function AdminDashboard() {
       title: project.title,
       category: project.category as string,
       client_name: project.client_name ?? "",
+      location: project.location ?? "",
       description: project.description,
       details: project.details ?? "",
       slug: project.slug ?? "",
@@ -464,13 +469,18 @@ export function AdminDashboard() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-2 block text-sm text-slate-300">Slug URL</label>
-                <input value={form.slug} onChange={(event) => handleInputChange("slug", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="planta-de-procesamiento-minero" />
+                <label className="mb-2 block text-sm text-slate-300">Ubicación</label>
+                <input value={form.location} onChange={(event) => handleInputChange("location", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="Santiago, Chile" />
               </div>
               <div>
                 <label className="mb-2 block text-sm text-slate-300">Resultado clave</label>
                 <input value={form.result_key} onChange={(event) => handleInputChange("result_key", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="+32% rendimiento" />
               </div>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm text-slate-300">Slug URL</label>
+              <input value={form.slug} onChange={(event) => handleInputChange("slug", event.target.value)} className="w-full rounded-2xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-white outline-none focus:border-cyan-400" placeholder="planta-de-procesamiento-minero" />
             </div>
 
             <div>
@@ -604,6 +614,7 @@ export function AdminDashboard() {
                     </div>
                     <div className="mt-2 truncate text-lg font-semibold text-white">{project.title}</div>
                     <div className="mt-1 text-sm text-slate-400">{project.client_name || "Cliente corporativo"}</div>
+                    {project.location && <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-500">{project.location}</div>}
                   </div>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => handleEdit(project)} className="rounded-full border border-slate-700 bg-slate-900 p-2 text-slate-200 hover:border-cyan-400/60">

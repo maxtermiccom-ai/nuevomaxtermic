@@ -553,7 +553,7 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
               <li><a href="tel:+56967407770">+56967407770</a></li>
               <li><a href="mailto:r.alva@maxtermic.com">r.alva@maxtermic.com</a></li>
-              <li>Santiago, Chile</li>
+              <li>Av. Providencia 1208, Of. 207, Providencia, Santiago</li>
               <li>Atención técnica 24/7</li>
             </ul>
           </div>

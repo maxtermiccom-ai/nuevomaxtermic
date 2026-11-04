@@ -7,6 +7,7 @@ export type ProjectRecord = {
   category: ProjectCategory | string;
   description: string;
   details?: string;
+  location?: string;
   result_key?: string;
   featured?: boolean;
   client_name?: string;

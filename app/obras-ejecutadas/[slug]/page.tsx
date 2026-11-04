@@ -62,6 +62,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const parsedDescription = parseProjectDescription(project.description);
   const projectDetails = project.details || parsedDescription.details;
   const resultKey = project.result_key || parsedDescription.resultKey || "+32% rendimiento";
+  const projectLocation = project.location?.trim() || "Santiago, Chile";
   const detailItems = projectDetails
     ? projectDetails
         .split(/\n|•/)
@@ -112,8 +113,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         <section className="mt-8 grid gap-4 sm:mt-10 md:grid-cols-3 md:gap-5">
           {[
             { label: "Resultado clave", value: resultKey || "Eficiencia operativa", detail: "Optimización del desempeño del sistema" },
+            { label: "Ubicación", value: projectLocation, detail: "Supervisión y ejecución en sitio" },
             { label: "Ámbito", value: project.category || "Infraestructura crítica", detail: "Diseño orientado a continuidad" },
-            { label: "Impacto", value: "Ejecución institucional", detail: "Mejora de consumo y estabilidad" },
           ].map((item) => (
             <div key={item.label} className="rounded-[24px] border border-slate-800 bg-slate-900/70 p-5 sm:p-6">
               <div className="text-[9px] uppercase tracking-[0.2em] text-cyan-300/80 sm:text-[10px]">{item.label}</div>

@@ -34,7 +34,7 @@ export async function signInWithSupabase(email: string, password: string) {
   };
 }
 
-export const projectSelectColumns = "id, title, slug, category, description, details, result_key, featured, client_name, images, created_at";
+export const projectSelectColumns = "id, title, slug, category, description, details, location, result_key, featured, client_name, images, created_at";
 
 export async function getProjectsFromSupabase() {
   if (!supabase) {
@@ -46,7 +46,7 @@ export async function getProjectsFromSupabase() {
     .select(projectSelectColumns)
     .order("created_at", { ascending: false });
 
-  if (response.error && /details|result_key|featured/i.test(response.error.message)) {
+  if (response.error && /details|location|result_key|featured/i.test(response.error.message)) {
     response = await supabase
       .from("projects")
       .select("id, title, slug, category, description, client_name, images, created_at")
