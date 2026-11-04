@@ -106,9 +106,6 @@ export function ProjectImageViewer({
 
           <div className="absolute inset-x-3 bottom-3 flex flex-col gap-2 sm:inset-x-4 sm:bottom-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="rounded-full border border-slate-700 bg-slate-950/70 px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-cyan-200 backdrop-blur-sm sm:px-3">
-                Visor de imágenes
-              </div>
               {safeImages.length > 1 && (
                 <button
                   type="button"
