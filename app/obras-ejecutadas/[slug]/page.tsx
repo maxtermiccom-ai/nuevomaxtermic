@@ -67,7 +67,6 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         .split(/\n|•/)
         .map((item: string) => item.trim())
         .filter(Boolean)
-        .slice(0, 4)
     : [
         "Diagnóstico técnico del sistema y requerimientos operativos.",
         "Diseño y dimensionamiento para condiciones reales de uso.",
@@ -132,11 +131,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
 
           <div className="rounded-[24px] border border-slate-800 bg-slate-900/70 p-5 sm:p-7">
-            <div className="text-[9px] uppercase tracking-[0.22em] text-cyan-300/80 sm:text-[10px]">Entrega</div>
-            <h2 className="mt-4 text-xl font-black text-white sm:text-2xl">Trabajo con control, trazabilidad y respaldo</h2>
+            <div className="text-[9px] uppercase tracking-[0.22em] text-cyan-300/80 sm:text-[10px]">Especificaciones técnicas</div>
+            <h2 className="mt-4 text-xl font-black text-white sm:text-2xl">Detalle técnico de la solución</h2>
             <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
-              {detailItems.map((item: string) => (
-                <li key={item}>• {item}</li>
+              {detailItems.map((item: string, index: number) => (
+                <li key={`${item}-${index}`}>
+                  • {item}
+                </li>
               ))}
             </ul>
           </div>
