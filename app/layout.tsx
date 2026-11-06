@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import { PwaInstallPrompt } from "../components/pwa-install-prompt";
@@ -87,6 +88,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" className={`${inter.variable} ${orbitron.variable} h-full antialiased`}>
       <body className="min-h-full bg-slate-950 text-slate-100">
+        <Script
+          id="gtm-loader"
+          strategy="beforeInteractive"
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-M4KLB9ZL"
+          async
+        />
+        <Script
+          id="gtm-data-layer"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+            `,
+          }}
+        />
         <PwaRegister />
         {children}
         <WhatsAppFloat />
