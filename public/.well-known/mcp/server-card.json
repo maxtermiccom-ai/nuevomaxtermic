@@ -1,0 +1,19 @@
+{
+  "name": "maxtermic-site",
+  "version": "1.0.0",
+  "description": "Portal de MAXTERMIC para agentes de IA y herramientas web del navegador.",
+  "url": "https://www.maxtermic.com",
+  "endpoint": "https://www.maxtermic.com",
+  "capabilities": [
+    "site-summary",
+    "markdown",
+    "structured-data",
+    "webmcp-tools"
+  ],
+  "tools": [
+    {
+      "name": "maxtermic-site-info",
+      "description": "Devuelve información general, servicios y contacto de MAXTERMIC."
+    }
+  ]
+}

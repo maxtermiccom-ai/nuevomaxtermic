@@ -533,8 +533,8 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <div>
             <div className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-200">Navegación</div>
             <ul className="mt-5 space-y-3 text-sm text-slate-300">
-              {["Inicio", "Quiénes Somos", "Servicios", "Obras Ejecutadas", "Recursos", "Contacto"].map((item) => (
-                <li key={item}><a href={item === "Inicio" ? "/" : item === "Quiénes Somos" ? "/quienes-somos" : item === "Servicios" ? "/servicios" : item === "Obras Ejecutadas" ? "/obras-ejecutadas" : item === "Recursos" ? "/recursos" : "/contacto"} className="transition hover:text-white">{item}</a></li>
+              {["Inicio", "Sobre nosotros", "Servicios", "Obras Ejecutadas", "Recursos", "Contacto"].map((item) => (
+                <li key={item}><a href={item === "Inicio" ? "/" : item === "Sobre nosotros" ? "/about" : item === "Servicios" ? "/servicios" : item === "Obras Ejecutadas" ? "/obras-ejecutadas" : item === "Recursos" ? "/recursos" : "/contacto"} className="transition hover:text-white">{item}</a></li>
               ))}
             </ul>
           </div>
@@ -563,8 +563,9 @@ export function LandingPage({ projects }: { projects: ProjectRecord[] }) {
           <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
             <span>© 2026 MAXTERMIC. Todos los derechos reservados.</span>
             <div className="flex gap-4">
+              <a href="/about" className="transition hover:text-slate-200">Sobre nosotros</a>
+              <a href="/terms" className="transition hover:text-slate-200">Términos</a>
               <a href="/politica-privacidad" className="transition hover:text-slate-200">Política de privacidad</a>
-              <a href="/terminos" className="transition hover:text-slate-200">Términos</a>
             </div>
           </div>
         </div>

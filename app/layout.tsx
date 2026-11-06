@@ -105,6 +105,69 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             `,
           }}
         />
+        <Script id="webmcp-registration" strategy="afterInteractive">
+          {`
+            (function () {
+              const modelContext = navigator.modelContext;
+              if (!modelContext || typeof modelContext.registerTool !== 'function') {
+                return;
+              }
+
+              modelContext.registerTool({
+                name: 'maxtermic-site-info',
+                description: 'Devuelve información general, servicios y contacto de MAXTERMIC.',
+                inputSchema: {
+                  type: 'object',
+                  properties: {
+                    section: {
+                      type: 'string',
+                      enum: ['general', 'servicios', 'contacto'],
+                      description: 'Sección de la web que se desea consultar.'
+                    }
+                  },
+                  required: []
+                },
+                execute: async (input = {}) => {
+                  const section = input.section ?? 'general';
+                  const base = {
+                    name: 'MAXTERMIC',
+                    url: 'https://www.maxtermic.com',
+                    description: 'Especialistas en climatización industrial, comercial e infraestructura crítica en Chile.',
+                    contact: {
+                      phone: '+56 9 6674 0770',
+                      email: 'r.alva@maxtermic.com',
+                    },
+                  };
+
+                  if (section === 'servicios') {
+                    return {
+                      ...base,
+                      services: [
+                        'Climatización industrial y VRV/VRF',
+                        'Chiller y torres de enfriamiento',
+                        'Ventilación mecánica y extracción',
+                        'Mantenimiento preventivo y correctivo',
+                      ],
+                    };
+                  }
+
+                  if (section === 'contacto') {
+                    return {
+                      ...base,
+                      contact: {
+                        phone: '+56 9 6674 0770',
+                        email: 'r.alva@maxtermic.com',
+                        address: 'Providencia, Santiago, Chile',
+                      },
+                    };
+                  }
+
+                  return base;
+                }
+              });
+            })();
+          `}
+        </Script>
         <PwaRegister />
         {children}
         <WhatsAppFloat />

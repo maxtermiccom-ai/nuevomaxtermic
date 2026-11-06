@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const navItems = [
   ["Inicio", "/"],
-  ["Quiénes Somos", "/quienes-somos"],
+  ["Sobre nosotros", "/about"],
   ["Servicios", "/servicios"],
   ["Obras Ejecutadas", "/obras-ejecutadas"],
   ["Recursos", "/recursos"],
