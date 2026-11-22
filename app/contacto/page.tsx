@@ -22,7 +22,7 @@ const contactSchema = {
   "@type": "Organization",
   name: "MAXTERMIC",
   url: "https://www.maxtermic.com",
-  telephone: "+56 9 6674 0770",
+  telephone: "+56966740770",
   email: "r.alva@maxtermic.com",
   address: {
     "@type": "PostalAddress",

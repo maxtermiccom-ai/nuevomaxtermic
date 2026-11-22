@@ -152,9 +152,9 @@ export function ContactForm({ faqItems }: ContactFormProps) {
                 <h2 className="text-lg font-semibold text-white">Contacto directo</h2>
               </div>
               <ul className="mt-5 space-y-4 text-sm text-slate-300">
-                <li>+56 9 7500 571</li>
+                <li>+56966740770</li>
                 <li>r.alva@maxtermic.com</li>
-                <li>Av. Providencia 1208, Of. 207, Providencia, Santiago, Chile</li>
+                <li>Av.Providencia 1208, Of. 207, Providencia, Santiago, Chile</li>
               </ul>
             </div>
 
