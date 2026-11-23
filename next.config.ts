@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   experimental: {
     agentFeedback: false,
+    agentUpgrade: "security",
   },
   images: {
     remotePatterns: [
