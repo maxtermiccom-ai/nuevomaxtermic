@@ -18,7 +18,7 @@ export default function AdminPage() {
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
             <div className="text-xs uppercase tracking-[0.32em] text-cyan-300">Panel privado</div>
-            <h1 className="mt-2 text-3xl font-black text-white">Dashboard de proyectos</h1>
+            <h1 className="mt-2 text-3xl font-black text-white">Panel de administración</h1>
           </div>
           <div className="flex items-center gap-3">
             <a href="/" className="rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-200 hover:border-cyan-400/60">

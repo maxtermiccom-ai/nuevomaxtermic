@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Contactos de WhatsApp
+
+Para guardar los clics y verlos en **Panel admin → Contactos WhatsApp**, ejecuta `supabase/migrations/20261122_whatsapp_interactions.sql` en el SQL Editor del proyecto Supabase. También deben estar configuradas `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+
+El botón abre WhatsApp directamente y registra el clic sin pedir datos. Un clic no revela el número de teléfono de la persona; para guardar números de quienes envían mensajes se necesita integrar la API de WhatsApp Business y configurar su webhook.
+
 ## Getting Started
 
 First, run the development server:

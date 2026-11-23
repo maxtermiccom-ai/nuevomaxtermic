@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cloud, Pencil, PlusCircle, ShieldCheck, Trash2, Upload } from "lucide-react";
+import { Cloud, MessageCircle, Pencil, PlusCircle, Trash2, Upload } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { AdminWhatsAppContacts } from "@/components/admin-whatsapp-contacts";
 import type { ProjectRecord } from "@/lib/projects";
 import { isSupabaseConfigured, projectSelectColumns, supabase } from "@/lib/supabase";
 
@@ -80,6 +81,7 @@ const normalizeProject = (project: any): ProjectRecord => {
 };
 
 export function AdminDashboard() {
+  const [activeSection, setActiveSection] = useState<"projects" | "whatsapp">("projects");
   const [projects, setProjects] = useState<ProjectRecord[]>([]);
   const [form, setForm] = useState(initialForm);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -389,6 +391,16 @@ export function AdminDashboard() {
 
   return (
     <div className="space-y-8">
+      <nav aria-label="Secciones de administración" className="flex flex-wrap gap-2 rounded-2xl border border-slate-800 bg-slate-900/70 p-2">
+        <button type="button" onClick={() => setActiveSection("projects")} aria-current={activeSection === "projects" ? "page" : undefined} className={`inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${activeSection === "projects" ? "bg-cyan-400 text-slate-950" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}>
+          <Cloud size={16} /> Proyectos
+        </button>
+        <button type="button" onClick={() => setActiveSection("whatsapp")} aria-current={activeSection === "whatsapp" ? "page" : undefined} className={`inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${activeSection === "whatsapp" ? "bg-emerald-400 text-slate-950" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}>
+          <MessageCircle size={16} /> Contactos WhatsApp
+        </button>
+      </nav>
+
+      {activeSection === "whatsapp" ? <AdminWhatsAppContacts /> : <>
       <div className="grid gap-4 md:grid-cols-4">
         {[
           { label: "Total", value: summary.total },
@@ -630,8 +642,7 @@ export function AdminDashboard() {
           </div>
         </section>
       </div>
-
-
+      </>}
     </div>
   );
 }
